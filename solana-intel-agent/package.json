@@ -1,0 +1,39 @@
+{
+  "name": "solana-intel-agent",
+  "version": "1.0.0",
+  "description": "Autonomous on-chain intelligence agent for OOBE × Ace Data Cloud Bounty 2026",
+  "main": "dist/daemon/loop.js",
+  "scripts": {
+    "register": "ts-node src/setup/register.ts",
+    "publish-tools": "ts-node src/setup/publishTools.ts",
+    "start": "ts-node src/daemon/loop.ts",
+    "build": "tsc",
+    "start:prod": "node dist/daemon/loop.js",
+    "check": "npx synapse-sap doctor run"
+  },
+  "keywords": [
+    "solana",
+    "oobe",
+    "ace-data",
+    "autonomous-agent",
+    "x402"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@oobe-protocol-labs/synapse-client-sdk": "^2.0.6",
+    "@oobe-protocol-labs/synapse-sap-sdk": "^0.18.0",
+    "@solana/web3.js": "^1.98.4",
+    "dotenv": "^17.4.2",
+    "node-cron": "^4.2.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.2.0",
+    "@types/node": "^25.9.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,14 @@
+# Root-level loose files
+AgentDashboard.jsx
+BOUNTY_BUILD_DOCS.md
+BOUNTY_BUILD_DOCS_FINAL.md
+DEMO_SCRIPT.md
+convert.js
+
+# IDE / editor
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

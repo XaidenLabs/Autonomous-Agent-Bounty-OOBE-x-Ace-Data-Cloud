@@ -1,0 +1,37 @@
+{
+  "name": "SolanaIntelAgent",
+  "description": "Fully autonomous on-chain intelligence agent using Ace Data Cloud AI services",
+  "agentId": "did:sap:solana-intel-001",
+  "agentUri": "https://github.com/yourusername/solana-intel-agent",
+  "x402Endpoint": "https://github.com/yourusername/solana-intel-agent#x402",
+  "capabilities": [
+    {
+      "id": "solana:analyze",
+      "protocol": "solana",
+      "version": "1.0",
+      "description": "Analyze Solana on-chain events and produce structured intelligence reports"
+    },
+    {
+      "id": "ace:inference",
+      "protocol": "A2A",
+      "version": "1.0",
+      "description": "Multi-modal AI inference: LLM text analysis, image generation, audio generation via Ace Data Cloud"
+    },
+    {
+      "id": "payment:x402",
+      "protocol": "x402",
+      "version": "1.0",
+      "description": "Autonomous micropayment settlement via OOBE on-chain escrow"
+    }
+  ],
+  "protocols": ["A2A", "MCP"],
+  "pricing": [
+    {
+      "tierId": "standard",
+      "pricePerCall": 5000,
+      "rateLimit": 60,
+      "tokenType": "sol",
+      "settlementMode": "x402"
+    }
+  ]
+}
