@@ -206,34 +206,55 @@ export async function writeLoopToSession(
 
   console.log(`[SESSION] Writing ${payload.length} bytes (entry #${totalEntries})...`);
 
-  const ix = await client.vault.inscribeMemory({
-    sequence: loopWriteCount - 1,       // u32 (0-based)
-    encryptedData: payload,             // bytes (Buffer)
-    nonce: sha256Arr12(`nonce-${loopWriteCount}`), // [u8; 12]
-    contentHash: sha256Arr32(payload),  // [u8; 32]
-    totalFragments: 1,                  // u8
-    fragmentIndex: 0,                   // u8
-    compression: 0,                     // u8: 0 = none
-    epochIndex,                         // u32
-    wallet: keypair.publicKey,
-    agent: agentPda,
-    vault: vaultPda,
-    session: sessionPda,
-    epochPage: epochPagePda,
-    signer: keypair,
-    remainingAccounts: [],
-  });
+  let success = false;
+  let attempts = 0;
+  let sig: string | undefined;
 
-  const tx = await client.buildTransaction([ix], keypair.publicKey);
-  tx.sign([keypair]);
-  let sig;
-  try {
-    sig = await client.connection.sendTransaction(tx, { preflightCommitment: "confirmed" });
-  } catch (err) {
+  while (!success && attempts < 10) {
+    try {
+      const ix = await client.vault.inscribeMemory({
+        sequence: loopWriteCount - 1,       // u32 (0-based)
+        encryptedData: payload,             // bytes (Buffer)
+        nonce: sha256Arr12(`nonce-${loopWriteCount}`), // [u8; 12]
+        contentHash: sha256Arr32(payload),  // [u8; 32]
+        totalFragments: 1,                  // u8
+        fragmentIndex: 0,                   // u8
+        compression: 0,                     // u8: 0 = none
+        epochIndex,                         // u32
+        wallet: keypair.publicKey,
+        agent: agentPda,
+        vault: vaultPda,
+        session: sessionPda,
+        epochPage: epochPagePda,
+        signer: keypair,
+        remainingAccounts: [],
+      });
+
+      const tx = await client.buildTransaction([ix], keypair.publicKey);
+      tx.sign([keypair]);
+      sig = await client.connection.sendTransaction(tx, { preflightCommitment: "confirmed" });
+      success = true;
+    } catch (err: any) {
+      const msg = err.message || "";
+      if (msg.includes("InvalidSequence") || msg.includes("bad seq") || msg.includes("0x179c")) {
+        console.warn(`[SESSION] Stale RPC: sequence ${loopWriteCount - 1} failed. Incrementing and probing...`);
+        loopWriteCount++;
+        totalEntries++;
+        attempts++;
+      } else {
+        loopWriteCount--;
+        totalEntries--;
+        throw err;
+      }
+    }
+  }
+
+  if (!success) {
     loopWriteCount--;
     totalEntries--;
-    throw err;
+    throw new Error(`[SESSION] Failed to auto-heal sequence counter after 10 attempts.`);
   }
+
   console.log(`[SESSION] ✅ Written. TX: ${sig}. Total: ${totalEntries}`);
 
   // Seal every 10 loops
