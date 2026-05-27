@@ -208,7 +208,7 @@ export async function writeLoopToSession(
 
   let success = false;
   let attempts = 0;
-  let sig: string | undefined;
+  let sig: string = "";
 
   while (!success && attempts < 10) {
     try {
