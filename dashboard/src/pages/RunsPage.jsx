@@ -1,7 +1,12 @@
+import { useState } from 'react';
 import { C, timeAgo, riskColor, Pill, trunc } from '../components/ui/Shared';
+import RunModal from '../components/ui/RunModal';
 
 export default function RunsPage({ runs, filtered, search, isMobile }) {
+  const [selectedRun, setSelectedRun] = useState(null);
+
   return (
+    <>
     <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
         <div style={{ fontSize: 9, color: C.dim, letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: 600 }}>
@@ -14,33 +19,41 @@ export default function RunsPage({ runs, filtered, search, isMobile }) {
         }}>↑ Export CSV</button>
       </div>
       <div style={{ overflowX: "auto" }}>
-      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 600 }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: isMobile ? 300 : 600 }}>
         <thead>
           <tr>
-            {["#", "Time", "Insight", "Risk", "Duration", "Lamports", "Settlement TX", "Sentinel TX", "Status"].map(h => (
-              <th key={h} style={{
-                fontSize: 9, color: C.dim, letterSpacing: "0.1em",
-                textTransform: "uppercase", padding: "7px 10px",
-                borderBottom: `1px solid ${C.border2}`, textAlign: "left", fontWeight: 600,
-              }}>{h}</th>
+            {[
+              { h: "#", hideMob: false }, { h: "Time", hideMob: false }, 
+              { h: "Insight", hideMob: true }, { h: "Risk", hideMob: false }, 
+              { h: "Duration", hideMob: true }, { h: "Lamports", hideMob: true }, 
+              { h: "Settlement TX", hideMob: true }, { h: "Sentinel TX", hideMob: true }, 
+              { h: "Status", hideMob: false }
+            ].map(col => (
+              (!isMobile || !col.hideMob) && (
+                <th key={col.h} style={{
+                  fontSize: 9, color: C.dim, letterSpacing: "0.1em",
+                  textTransform: "uppercase", padding: "7px 10px",
+                  borderBottom: `1px solid ${C.border2}`, textAlign: "left", fontWeight: 600,
+                }}>{col.h}</th>
+              )
             ))}
           </tr>
         </thead>
         <tbody>
           {[...filtered].reverse().map((r, i) => (
-            <tr key={r.id || i}>
+            <tr key={r.id || i} onClick={() => setSelectedRun(r)} style={{ cursor: "pointer", opacity: 0.9 }}>
               <td style={{ padding: "10px", fontSize: 11, color: C.orange, fontWeight: 700, borderBottom: `1px solid ${C.border2}` }}>#{r.id}</td>
               <td style={{ padding: "10px", fontSize: 9, color: C.dim, borderBottom: `1px solid ${C.border2}` }}>{timeAgo(r.timestamp)}</td>
-              <td style={{ padding: "10px", fontSize: 9, color: C.muted, borderBottom: `1px solid ${C.border2}`, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.insight}</td>
+              {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.muted, borderBottom: `1px solid ${C.border2}`, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.insight}</td>}
               <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
                 <Pill col={riskColor(r.riskScore)}>{r.riskScore}</Pill>
               </td>
-              <td style={{ padding: "10px", fontSize: 9, color: C.dim, borderBottom: `1px solid ${C.border2}` }}>{r.durationMs}ms</td>
-              <td style={{ padding: "10px", fontSize: 10, color: C.muted, borderBottom: `1px solid ${C.border2}` }}>{r.amountLamports?.toLocaleString() ?? 0}</td>
-              <td style={{ padding: "10px", fontSize: 9, color: C.orange, fontFamily: "monospace", borderBottom: `1px solid ${C.border2}` }}>{trunc(r.settlementTx, 9)}</td>
-              <td style={{ padding: "10px", fontSize: 9, color: C.orange2, fontFamily: "monospace", borderBottom: `1px solid ${C.border2}` }}>{trunc(r.sentinelTx, 9)}</td>
+              {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.dim, borderBottom: `1px solid ${C.border2}` }}>{r.durationMs}ms</td>}
+              {!isMobile && <td style={{ padding: "10px", fontSize: 10, color: C.muted, borderBottom: `1px solid ${C.border2}` }}>{r.amountLamports?.toLocaleString() ?? 0}</td>}
+              {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.orange, fontFamily: "monospace", borderBottom: `1px solid ${C.border2}` }}>{trunc(r.settlementTx, 9)}</td>}
+              {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.orange2, fontFamily: "monospace", borderBottom: `1px solid ${C.border2}` }}>{trunc(r.sentinelTx, 9)}</td>}
               <td style={{ padding: "12px", borderBottom: `1px solid ${C.border2}` }}>
-                <Pill col={r.hasError ? C.red : C.green}>{r.hasError ? "✗ Failed" : "✓ Done"}</Pill>
+                <Pill col={r.hasError ? C.red : C.green}>{r.hasError ? "✗" : "✓"}</Pill>
               </td>
             </tr>
           ))}
@@ -48,5 +61,7 @@ export default function RunsPage({ runs, filtered, search, isMobile }) {
       </table>
       </div>
     </div>
+    <RunModal run={selectedRun} onClose={() => setSelectedRun(null)} />
+    </>
   );
 }

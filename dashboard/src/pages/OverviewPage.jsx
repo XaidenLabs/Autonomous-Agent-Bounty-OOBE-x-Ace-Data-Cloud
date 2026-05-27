@@ -3,9 +3,11 @@ import { C, timeAgo, riskColor, riskLabel, Pill, Row, SecTitle, trunc } from '..
 import Sparkline from '../components/ui/Sparkline';
 import Ring from '../components/ui/Ring';
 import Bars from '../components/ui/Bars';
+import RunModal from '../components/ui/RunModal';
 
 export default function OverviewPage({ runs, filtered, search, setPage, status, isMobile }) {
   const [timeframe, setTimeframe] = useState("ALL");
+  const [selectedRun, setSelectedRun] = useState(null);
   const tfOptions = [
     { label: "15M", ms: 15 * 60 * 1000 },
     { label: "1H", ms: 60 * 60 * 1000 },
@@ -180,7 +182,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
               </thead>
               <tbody>
                 {[...tfFiltered].slice(-5).reverse().map(r => (
-                  <tr key={r.id} style={{ animation: "fadein 0.3s ease" }}>
+                  <tr key={r.id} onClick={() => setSelectedRun(r)} style={{ animation: "fadein 0.3s ease", cursor: "pointer", opacity: 0.9 }}>
                     <td style={{
                       padding: "10px", fontSize: 11, color: C.orange, fontWeight: 700,
                       borderBottom: `1px solid ${C.border2}`
@@ -325,6 +327,8 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
           </div>
         </div>
       </div>
+
+      <RunModal run={selectedRun} onClose={() => setSelectedRun(null)} />
     </>
   );
 }
