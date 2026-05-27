@@ -33,6 +33,7 @@ export default function Topbar({ page, runsLength, search, setSearch, running, r
           Loop #{runsLength} · {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
         </div>
       </div>
+    </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         {/* Search */}
