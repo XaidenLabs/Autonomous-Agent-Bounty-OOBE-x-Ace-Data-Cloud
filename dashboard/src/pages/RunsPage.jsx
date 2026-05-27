@@ -27,13 +27,13 @@ export default function RunsPage({ runs, filtered, search, isMobile }) {
               { h: "Insight", hideMob: false }, { h: "Risk", hideMob: true }, 
               { h: "Duration", hideMob: true }, { h: "Lamports", hideMob: true }, 
               { h: "Settlement TX", hideMob: true }, { h: "Sentinel TX", hideMob: true }, 
-              { h: "Status", hideMob: false }
+              { h: "Status", hideMob: false, align: "right" }
             ].map(col => (
               (!isMobile || !col.hideMob) && (
                 <th key={col.h} style={{
                   fontSize: 9, color: C.dim, letterSpacing: "0.1em",
                   textTransform: "uppercase", padding: "7px 10px",
-                  borderBottom: `1px solid ${C.border2}`, textAlign: "left", fontWeight: 600,
+                  borderBottom: `1px solid ${C.border2}`, textAlign: col.align || "left", fontWeight: 600,
                 }}>{col.h}</th>
               )
             ))}
@@ -54,7 +54,7 @@ export default function RunsPage({ runs, filtered, search, isMobile }) {
               {!isMobile && <td style={{ padding: "10px", fontSize: 10, color: C.muted, borderBottom: `1px solid ${C.border2}` }}>{r.amountLamports?.toLocaleString() ?? 0}</td>}
               {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.orange, fontFamily: "monospace", borderBottom: `1px solid ${C.border2}` }}>{trunc(r.settlementTx, 9)}</td>}
               {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.orange2, fontFamily: "monospace", borderBottom: `1px solid ${C.border2}` }}>{trunc(r.sentinelTx, 9)}</td>}
-              <td style={{ padding: "12px", borderBottom: `1px solid ${C.border2}` }}>
+              <td style={{ padding: "12px 10px", borderBottom: `1px solid ${C.border2}`, textAlign: "right" }}>
                 <Pill col={r.hasError ? C.red : C.green}>{r.hasError ? "✗" : "✓"}</Pill>
               </td>
             </tr>

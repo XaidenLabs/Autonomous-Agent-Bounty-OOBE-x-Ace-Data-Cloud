@@ -175,14 +175,14 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
                   {[
                     { h: "Loop", hideMob: false }, { h: "Insight", hideMob: false }, 
                     { h: "Risk", hideMob: true }, { h: "Lamports", hideMob: true }, 
-                    { h: "Status", hideMob: false }
+                    { h: "Status", hideMob: false, align: "right" }
                   ].map(col => (
                     (!isMobile || !col.hideMob) && (
                       <th key={col.h} style={{
                         fontSize: 9, color: C.dim, letterSpacing: "0.12em",
                         textTransform: "uppercase", padding: "7px 10px",
                         borderBottom: `1px solid ${C.border2}`,
-                        textAlign: "left", fontWeight: 600,
+                        textAlign: col.align || "left", fontWeight: 600,
                       }}>{col.h}</th>
                     )
                   ))}
@@ -212,7 +212,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
                       }}>
                         {r.amountLamports?.toLocaleString() ?? 0}</td>
                     )}
-                    <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
+                    <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}`, textAlign: "right" }}>
                       <Pill col={r.hasError ? C.red : C.green}>{r.hasError ? "✗" : "✓"}</Pill></td>
                   </tr>
                 ))}
