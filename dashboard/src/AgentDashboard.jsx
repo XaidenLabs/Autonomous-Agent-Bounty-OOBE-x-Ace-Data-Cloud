@@ -111,12 +111,14 @@ export default function AgentDashboard() {
       setCd(null);
       return;
     }
-    const lastRunTime = runs[0].timestamp;
+    const latestRun = runs[runs.length - 1];
+    const lastRunTime = latestRun.timestamp;
     const nextRunTime = lastRunTime + 600000; // 10 minutes
 
     const updateCd = () => {
       const now = Date.now();
-      const diffSecs = Math.max(0, Math.floor((nextRunTime - now) / 1000));
+      let diffSecs = Math.floor((nextRunTime - now) / 1000);
+      if (diffSecs < 0) diffSecs = 600 - (Math.abs(diffSecs) % 600);
       setCd(diffSecs);
     };
 
@@ -232,7 +234,7 @@ export default function AgentDashboard() {
             </div>
           )}
 
-          {page === "dashboard" && <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} />}
+          {page === "dashboard" && <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} cd={cd} />}
           {page === "runs" && <RunsPage runs={runs} filtered={filtered} search={search} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} />}
           {page === "payments" && <PaymentsPage runs={filtered} status={status} isMobile={isMobile} />}
           {page === "agent" && <AgentPage runs={filtered} status={status} isMobile={isMobile} />}

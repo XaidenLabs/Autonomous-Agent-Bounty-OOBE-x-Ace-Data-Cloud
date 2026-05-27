@@ -5,9 +5,16 @@ import Ring from '../components/ui/Ring';
 import Bars from '../components/ui/Bars';
 import RunModal from '../components/ui/RunModal';
 
-export default function OverviewPage({ runs, filtered, search, setPage, status, isMobile, isTablet, isNarrow }) {
+export default function OverviewPage({ runs, filtered, search, setPage, status, isMobile, isTablet, isNarrow, cd }) {
   const [timeframe, setTimeframe] = useState("ALL");
   const [selectedRun, setSelectedRun] = useState(null);
+
+  const formatTime = (seconds) => {
+    if (seconds === null) return "--:--";
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
   const tfOptions = [
     { label: "15M", ms: 15 * 60 * 1000 },
     { label: "1H", ms: 60 * 60 * 1000 },
@@ -52,8 +59,9 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 12, marginBottom: 16 }}>
         {[
           {
-            label: "Total Loops", val: tfFiltered.length, sub: "+1 every 10 min",
-            spark: tfFiltered.map((_, i) => i + 1), col: C.orange
+            label: "Total Loops", val: tfFiltered.length.toLocaleString(),
+            sub: `+1 every 10 min • Next in: ${formatTime(cd)}`,
+            spark: tfFiltered.map((_, i) => i), col: C.orange
           },
           {
             label: "Avg Risk Score", val: avgRisk, sub: riskLabel(avgRisk) + " risk",
