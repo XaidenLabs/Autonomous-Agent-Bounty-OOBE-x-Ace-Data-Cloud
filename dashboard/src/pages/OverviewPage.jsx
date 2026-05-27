@@ -94,15 +94,17 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
 
       {/* Main 2-col */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 330px", gap: 16 }}>
-        <div>
+        <div style={{ minWidth: 0 }}>
           {/* Chart card */}
           <div style={{
             background: C.card, border: `1px solid ${C.border}`,
             borderRadius: 12, padding: "16px 18px", marginBottom: 16,
+            overflow: "hidden"
           }}>
             <div style={{
               display: "flex", justifyContent: "space-between",
-              alignItems: "flex-start", marginBottom: 16,
+              alignItems: isMobile ? "stretch" : "flex-start", marginBottom: 16,
+              flexDirection: isMobile ? "column" : "row", gap: 12,
             }}>
               <div>
                 <div style={{
@@ -166,17 +168,23 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
                 letterSpacing: "0.06em",
               }}>View All →</button>
             </div>
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 400 }}>
+            <div style={{ overflowX: "auto", width: "100%" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: isMobile ? 250 : 400 }}>
               <thead>
                 <tr>
-                  {["Loop", "Insight", "Risk", "Lamports", "Status"].map(h => (
-                    <th key={h} style={{
-                      fontSize: 9, color: C.dim, letterSpacing: "0.12em",
-                      textTransform: "uppercase", padding: "7px 10px",
-                      borderBottom: `1px solid ${C.border2}`,
-                      textAlign: "left", fontWeight: 600,
-                    }}>{h}</th>
+                  {[
+                    { h: "Loop", hideMob: false }, { h: "Insight", hideMob: true }, 
+                    { h: "Risk", hideMob: false }, { h: "Lamports", hideMob: true }, 
+                    { h: "Status", hideMob: false }
+                  ].map(col => (
+                    (!isMobile || !col.hideMob) && (
+                      <th key={col.h} style={{
+                        fontSize: 9, color: C.dim, letterSpacing: "0.12em",
+                        textTransform: "uppercase", padding: "7px 10px",
+                        borderBottom: `1px solid ${C.border2}`,
+                        textAlign: "left", fontWeight: 600,
+                      }}>{col.h}</th>
+                    )
                   ))}
                 </tr>
               </thead>
@@ -187,21 +195,25 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
                       padding: "10px", fontSize: 11, color: C.orange, fontWeight: 700,
                       borderBottom: `1px solid ${C.border2}`
                     }}>#{r.id}</td>
-                    <td style={{
-                      padding: "10px", fontSize: 10, color: C.muted,
-                      borderBottom: `1px solid ${C.border2}`, maxWidth: 160,
-                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
-                    }}>
-                      {r.insight}</td>
+                    {!isMobile && (
+                      <td style={{
+                        padding: "10px", fontSize: 10, color: C.muted,
+                        borderBottom: `1px solid ${C.border2}`, maxWidth: 160,
+                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
+                      }}>
+                        {r.insight}</td>
+                    )}
                     <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
-                      <Pill col={riskColor(r.riskScore)}>{r.riskScore} {riskLabel(r.riskScore)}</Pill></td>
-                    <td style={{
-                      padding: "10px", fontSize: 10, color: C.muted,
-                      borderBottom: `1px solid ${C.border2}`
-                    }}>
-                      {r.amountLamports?.toLocaleString() ?? 0}</td>
+                      <Pill col={riskColor(r.riskScore)}>{r.riskScore} {!isMobile && riskLabel(r.riskScore)}</Pill></td>
+                    {!isMobile && (
+                      <td style={{
+                        padding: "10px", fontSize: 10, color: C.muted,
+                        borderBottom: `1px solid ${C.border2}`
+                      }}>
+                        {r.amountLamports?.toLocaleString() ?? 0}</td>
+                    )}
                     <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
-                      <Pill col={r.hasError ? C.red : C.green}>{r.hasError ? "✗ Failed" : "✓ Done"}</Pill></td>
+                      <Pill col={r.hasError ? C.red : C.green}>{r.hasError ? "✗" : "✓"}</Pill></td>
                   </tr>
                 ))}
               </tbody>
@@ -211,7 +223,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
         </div>
 
         {/* Right column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, minWidth: 0 }}>
 
           {/* Latest risk card */}
           {latest && (

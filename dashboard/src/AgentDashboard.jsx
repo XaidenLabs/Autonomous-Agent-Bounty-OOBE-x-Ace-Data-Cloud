@@ -185,7 +185,7 @@ export default function AgentDashboard() {
           setMobileMenuOpen={setMobileMenuOpen}
         />
 
-        <div style={{ flex: 1, overflowY: "auto", padding: "18px 22px" }}>
+        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: isMobile ? "14px 12px" : "18px 22px" }}>
           
           {/* Active loop banner */}
           {(running || triggering) && (
@@ -241,6 +241,7 @@ export default function AgentDashboard() {
             display: "flex", justifyContent: isMobile ? "flex-start" : "space-between",
             flexDirection: isMobile ? "column" : "row", gap: isMobile ? 8 : 0,
             fontSize: 9, color: "#2e2e2e", letterSpacing: "0.1em",
+            flexWrap: "wrap"
           }}>
             <span>SAP v0.9.3 · {trunc(status?.programId, 10)}</span>
             <span>SENTINEL · {trunc(status?.sentinelPubkey, 10)}</span>
