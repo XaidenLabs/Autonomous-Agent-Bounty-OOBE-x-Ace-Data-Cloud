@@ -87,6 +87,26 @@ export default function AgentDashboard() {
     return () => clearInterval(interval);
   }, [fetchData]);
 
+  // Persistent countdown effect
+  useEffect(() => {
+    if (running || !runs || runs.length === 0) {
+      setCd(null);
+      return;
+    }
+    const lastRunTime = runs[0].timestamp;
+    const nextRunTime = lastRunTime + 600000; // 10 minutes
+
+    const updateCd = () => {
+      const now = Date.now();
+      const diffSecs = Math.max(0, Math.floor((nextRunTime - now) / 1000));
+      setCd(diffSecs);
+    };
+
+    updateCd();
+    const interval = setInterval(updateCd, 1000);
+    return () => clearInterval(interval);
+  }, [runs, running]);
+
   const handleForceRun = async () => {
     if (running || triggering) return;
     setTriggering(true);
