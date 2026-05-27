@@ -24,15 +24,19 @@ export default function AgentDashboard() {
   const [cd, setCd] = useState(null);
   const [search, setSearch] = useState("");
   const [slim, setSlim] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1100);
+  const [isTablet, setIsTablet] = useState(window.innerWidth <= 768);
+  const [isNarrow, setIsNarrow] = useState(window.innerWidth <= 480);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const cdRef = useRef(null);
   const [triggering, setTriggering] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
+      const mobile = window.innerWidth <= 1100;
       setIsMobile(mobile);
+      setIsTablet(window.innerWidth <= 768);
+      setIsNarrow(window.innerWidth <= 480);
       if (!mobile) setMobileMenuOpen(false);
     };
     window.addEventListener("resize", handleResize);
@@ -228,8 +232,8 @@ export default function AgentDashboard() {
             </div>
           )}
 
-          {page === "dashboard" && <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} isMobile={isMobile} />}
-          {page === "runs" && <RunsPage runs={runs} filtered={filtered} search={search} isMobile={isMobile} />}
+          {page === "dashboard" && <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} />}
+          {page === "runs" && <RunsPage runs={runs} filtered={filtered} search={search} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} />}
           {page === "payments" && <PaymentsPage runs={filtered} status={status} isMobile={isMobile} />}
           {page === "agent" && <AgentPage runs={filtered} status={status} isMobile={isMobile} />}
           {page === "services" && <ServicesPage runs={filtered} status={status} isMobile={isMobile} />}

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { C, timeAgo, riskColor, Pill, trunc } from '../components/ui/Shared';
 import RunModal from '../components/ui/RunModal';
 
-export default function RunsPage({ runs, filtered, search, isMobile }) {
+export default function RunsPage({ runs, filtered, search, isMobile, isTablet, isNarrow }) {
   const [selectedRun, setSelectedRun] = useState(null);
 
   return (
@@ -23,13 +23,17 @@ export default function RunsPage({ runs, filtered, search, isMobile }) {
         <thead>
           <tr>
             {[
-              { h: "#", hideMob: false }, { h: "Time", hideMob: false }, 
-              { h: "Insight", hideMob: false }, { h: "Risk", hideMob: true }, 
-              { h: "Duration", hideMob: true }, { h: "Lamports", hideMob: true }, 
-              { h: "Settlement TX", hideMob: true }, { h: "Sentinel TX", hideMob: true }, 
-              { h: "Status", hideMob: false, align: "right" }
+              { h: "#", show: true }, 
+              { h: "Time", show: true }, 
+              { h: "Insight", show: true }, 
+              { h: "Risk", show: !isNarrow }, 
+              { h: "Duration", show: !isTablet }, 
+              { h: "Lamports", show: !isTablet }, 
+              { h: "Settlement TX", show: !isMobile }, 
+              { h: "Sentinel TX", show: !isMobile }, 
+              { h: "Status", show: true, align: "right" }
             ].map(col => (
-              (!isMobile || !col.hideMob) && (
+              col.show && (
                 <th key={col.h} style={{
                   fontSize: 9, color: C.dim, letterSpacing: "0.1em",
                   textTransform: "uppercase", padding: "7px 10px",
@@ -44,14 +48,14 @@ export default function RunsPage({ runs, filtered, search, isMobile }) {
             <tr key={r.id || i} onClick={() => setSelectedRun(r)} style={{ cursor: "pointer", opacity: 0.9 }}>
               <td style={{ padding: "10px", fontSize: 11, color: C.orange, fontWeight: 700, borderBottom: `1px solid ${C.border2}` }}>#{r.id}</td>
               <td style={{ padding: "10px", fontSize: 9, color: C.dim, borderBottom: `1px solid ${C.border2}` }}>{timeAgo(r.timestamp)}</td>
-              <td style={{ padding: "10px", fontSize: 9, color: C.muted, borderBottom: `1px solid ${C.border2}`, maxWidth: isMobile ? 120 : 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.insight}</td>
-              {!isMobile && (
+              <td style={{ padding: "10px", fontSize: 9, color: C.muted, borderBottom: `1px solid ${C.border2}`, maxWidth: isNarrow ? 120 : 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.insight}</td>
+              {!isNarrow && (
                 <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
                   <Pill col={riskColor(r.riskScore)}>{r.riskScore}</Pill>
                 </td>
               )}
-              {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.dim, borderBottom: `1px solid ${C.border2}` }}>{r.durationMs}ms</td>}
-              {!isMobile && <td style={{ padding: "10px", fontSize: 10, color: C.muted, borderBottom: `1px solid ${C.border2}` }}>{r.amountLamports?.toLocaleString() ?? 0}</td>}
+              {!isTablet && <td style={{ padding: "10px", fontSize: 9, color: C.dim, borderBottom: `1px solid ${C.border2}` }}>{r.durationMs}ms</td>}
+              {!isTablet && <td style={{ padding: "10px", fontSize: 10, color: C.muted, borderBottom: `1px solid ${C.border2}` }}>{r.amountLamports?.toLocaleString() ?? 0}</td>}
               {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.orange, fontFamily: "monospace", borderBottom: `1px solid ${C.border2}` }}>{trunc(r.settlementTx, 9)}</td>}
               {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.orange2, fontFamily: "monospace", borderBottom: `1px solid ${C.border2}` }}>{trunc(r.sentinelTx, 9)}</td>}
               <td style={{ padding: "12px 10px", borderBottom: `1px solid ${C.border2}`, textAlign: "right" }}>

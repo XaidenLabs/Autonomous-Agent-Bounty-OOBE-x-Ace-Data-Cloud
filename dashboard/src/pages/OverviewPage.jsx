@@ -5,7 +5,7 @@ import Ring from '../components/ui/Ring';
 import Bars from '../components/ui/Bars';
 import RunModal from '../components/ui/RunModal';
 
-export default function OverviewPage({ runs, filtered, search, setPage, status, isMobile }) {
+export default function OverviewPage({ runs, filtered, search, setPage, status, isMobile, isTablet, isNarrow }) {
   const [timeframe, setTimeframe] = useState("ALL");
   const [selectedRun, setSelectedRun] = useState(null);
   const tfOptions = [
@@ -173,11 +173,13 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
               <thead>
                 <tr>
                   {[
-                    { h: "Loop", hideMob: false }, { h: "Insight", hideMob: false }, 
-                    { h: "Risk", hideMob: true }, { h: "Lamports", hideMob: true }, 
-                    { h: "Status", hideMob: false, align: "right" }
+                    { h: "Loop", show: true }, 
+                    { h: "Insight", show: true }, 
+                    { h: "Risk", show: !isNarrow }, 
+                    { h: "Lamports", show: !isTablet }, 
+                    { h: "Status", show: true, align: "right" }
                   ].map(col => (
-                    (!isMobile || !col.hideMob) && (
+                    col.show && (
                       <th key={col.h} style={{
                         fontSize: 9, color: C.dim, letterSpacing: "0.12em",
                         textTransform: "uppercase", padding: "7px 10px",
@@ -197,15 +199,15 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
                     }}>#{r.id}</td>
                     <td style={{
                       padding: "10px", fontSize: 10, color: C.muted,
-                      borderBottom: `1px solid ${C.border2}`, maxWidth: isMobile ? 120 : 160,
+                      borderBottom: `1px solid ${C.border2}`, maxWidth: isNarrow ? 120 : 160,
                       overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
                     }}>
                       {r.insight}</td>
-                    {!isMobile && (
+                    {!isNarrow && (
                       <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
                         <Pill col={riskColor(r.riskScore)}>{r.riskScore} {riskLabel(r.riskScore)}</Pill></td>
                     )}
-                    {!isMobile && (
+                    {!isTablet && (
                       <td style={{
                         padding: "10px", fontSize: 10, color: C.muted,
                         borderBottom: `1px solid ${C.border2}`
