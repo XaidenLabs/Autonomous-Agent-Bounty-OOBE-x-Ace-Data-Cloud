@@ -24,6 +24,10 @@
 
 <br/>
 
+![Dashboard Screenshot](./dashboard.png)
+
+<br/>
+
 **[🚀 View Full Animated Project Page →](https://xaidenlabs.github.io/Autonomous-Agent-Bounty-OOBE-x-Ace-Data-Cloud/)**
 
 <br/>
