@@ -11,7 +11,17 @@ const NAV = [
 
 export default function Sidebar({ page, setPage, slim, setSlim, isMobile, mobileMenuOpen, setMobileMenuOpen }) {
   return (
-    <div style={{
+    <>
+      {isMobile && mobileMenuOpen && (
+        <div 
+          onClick={() => setMobileMenuOpen(false)}
+          style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(0,0,0,0.5)", zIndex: 99,
+          }}
+        />
+      )}
+      <div style={{
       width: isMobile ? 250 : (slim ? 58 : 210), 
       transition: "all .3s cubic-bezier(0.4, 0, 0.2, 1)", 
       flexShrink: 0,
@@ -128,5 +138,6 @@ export default function Sidebar({ page, setPage, slim, setSlim, isMobile, mobile
         )}
       </div>
     </div>
+    </>
   );
 }

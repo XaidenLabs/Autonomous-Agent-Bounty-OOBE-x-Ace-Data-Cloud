@@ -173,8 +173,8 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
               <thead>
                 <tr>
                   {[
-                    { h: "Loop", hideMob: false }, { h: "Insight", hideMob: true }, 
-                    { h: "Risk", hideMob: false }, { h: "Lamports", hideMob: true }, 
+                    { h: "Loop", hideMob: false }, { h: "Insight", hideMob: false }, 
+                    { h: "Risk", hideMob: true }, { h: "Lamports", hideMob: true }, 
                     { h: "Status", hideMob: false }
                   ].map(col => (
                     (!isMobile || !col.hideMob) && (
@@ -195,16 +195,16 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
                       padding: "10px", fontSize: 11, color: C.orange, fontWeight: 700,
                       borderBottom: `1px solid ${C.border2}`
                     }}>#{r.id}</td>
+                    <td style={{
+                      padding: "10px", fontSize: 10, color: C.muted,
+                      borderBottom: `1px solid ${C.border2}`, maxWidth: isMobile ? 120 : 160,
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
+                    }}>
+                      {r.insight}</td>
                     {!isMobile && (
-                      <td style={{
-                        padding: "10px", fontSize: 10, color: C.muted,
-                        borderBottom: `1px solid ${C.border2}`, maxWidth: 160,
-                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
-                      }}>
-                        {r.insight}</td>
+                      <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
+                        <Pill col={riskColor(r.riskScore)}>{r.riskScore} {riskLabel(r.riskScore)}</Pill></td>
                     )}
-                    <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
-                      <Pill col={riskColor(r.riskScore)}>{r.riskScore} {!isMobile && riskLabel(r.riskScore)}</Pill></td>
                     {!isMobile && (
                       <td style={{
                         padding: "10px", fontSize: 10, color: C.muted,
