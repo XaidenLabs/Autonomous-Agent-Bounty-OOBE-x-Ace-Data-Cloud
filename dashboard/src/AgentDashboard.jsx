@@ -87,7 +87,7 @@ export default function AgentDashboard() {
       if (isDaemonRunning) {
         const phaseIdx = PHASES.findIndex(p => p.key === statusData.currentPhase);
         setPhase(phaseIdx >= 0 ? phaseIdx : 0);
-        setProg(Math.round(((phaseIdx >= 0 ? phaseIdx : 0) / PHASES.length) * 100));
+        setProg(Math.round(((Math.max(0, phaseIdx) + 1) / PHASES.length) * 100));
         setCd(null);
       } else {
         setPhase(null);
@@ -222,8 +222,9 @@ export default function AgentDashboard() {
                   <div style={{ display: "flex", gap: 14, marginTop: 9 }}>
                     {PHASES.map((p, i) => (
                       <div key={p.key} style={{
-                        fontSize: 9, color: i < phase ? "#4ade80" : i === phase ? p.col : "#222",
-                        display: "flex", alignItems: "center", gap: 3, transition: "color 0.3s",
+                        fontSize: 9, color: i < phase ? "#4ade80" : i === phase ? p.col : "#555",
+                        display: "flex", alignItems: "center", gap: 3, transition: "all 0.3s",
+                        opacity: i > phase ? 0.6 : 1, fontWeight: i === phase ? 700 : 400
                       }}>
                         <span>{p.icon}</span><span>{p.label.split(" ")[0]}</span>
                       </div>
