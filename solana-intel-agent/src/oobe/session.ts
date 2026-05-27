@@ -159,6 +159,16 @@ export async function writeLoopToSession(
 ): Promise<SessionWriteResult> {
   const { agentPda, vaultPda, sessionPda } = getPdas(keypair.publicKey);
 
+  // Sync the sequence counter from chain to prevent "bad seq" errors 
+  // if a previous transaction dropped or got out of sync.
+  try {
+    const acct = await client.program.account.sessionLedger.fetch(sessionPda);
+    loopWriteCount = acct.sequenceCounter;
+    totalEntries = acct.sequenceCounter;
+  } catch (e) {
+    // ignore
+  }
+
   loopWriteCount++;
   totalEntries++;
 
