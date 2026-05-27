@@ -24,7 +24,7 @@ export default function RunsPage({ runs, filtered, search, isMobile }) {
           <tr>
             {[
               { h: "#", hideMob: false }, { h: "Time", hideMob: false }, 
-              { h: "Insight", hideMob: true }, { h: "Risk", hideMob: false }, 
+              { h: "Insight", hideMob: false }, { h: "Risk", hideMob: true }, 
               { h: "Duration", hideMob: true }, { h: "Lamports", hideMob: true }, 
               { h: "Settlement TX", hideMob: true }, { h: "Sentinel TX", hideMob: true }, 
               { h: "Status", hideMob: false }
@@ -44,10 +44,12 @@ export default function RunsPage({ runs, filtered, search, isMobile }) {
             <tr key={r.id || i} onClick={() => setSelectedRun(r)} style={{ cursor: "pointer", opacity: 0.9 }}>
               <td style={{ padding: "10px", fontSize: 11, color: C.orange, fontWeight: 700, borderBottom: `1px solid ${C.border2}` }}>#{r.id}</td>
               <td style={{ padding: "10px", fontSize: 9, color: C.dim, borderBottom: `1px solid ${C.border2}` }}>{timeAgo(r.timestamp)}</td>
-              {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.muted, borderBottom: `1px solid ${C.border2}`, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.insight}</td>}
-              <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
-                <Pill col={riskColor(r.riskScore)}>{r.riskScore}</Pill>
-              </td>
+              <td style={{ padding: "10px", fontSize: 9, color: C.muted, borderBottom: `1px solid ${C.border2}`, maxWidth: isMobile ? 120 : 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.insight}</td>
+              {!isMobile && (
+                <td style={{ padding: "10px", borderBottom: `1px solid ${C.border2}` }}>
+                  <Pill col={riskColor(r.riskScore)}>{r.riskScore}</Pill>
+                </td>
+              )}
               {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.dim, borderBottom: `1px solid ${C.border2}` }}>{r.durationMs}ms</td>}
               {!isMobile && <td style={{ padding: "10px", fontSize: 10, color: C.muted, borderBottom: `1px solid ${C.border2}` }}>{r.amountLamports?.toLocaleString() ?? 0}</td>}
               {!isMobile && <td style={{ padding: "10px", fontSize: 9, color: C.orange, fontFamily: "monospace", borderBottom: `1px solid ${C.border2}` }}>{trunc(r.settlementTx, 9)}</td>}
