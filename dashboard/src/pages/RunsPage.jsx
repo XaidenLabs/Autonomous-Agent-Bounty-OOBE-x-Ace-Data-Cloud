@@ -1,6 +1,6 @@
 import { C, timeAgo, riskColor, Pill, trunc } from '../components/ui/Shared';
 
-export default function RunsPage({ runs, filtered, search }) {
+export default function RunsPage({ runs, filtered, search, isMobile }) {
   return (
     <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
@@ -13,7 +13,8 @@ export default function RunsPage({ runs, filtered, search }) {
           fontFamily: "inherit", letterSpacing: "0.06em",
         }}>↑ Export CSV</button>
       </div>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <div style={{ overflowX: "auto" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 600 }}>
         <thead>
           <tr>
             {["#", "Time", "Insight", "Risk", "Duration", "Lamports", "Settlement TX", "Sentinel TX", "Status"].map(h => (
@@ -45,6 +46,7 @@ export default function RunsPage({ runs, filtered, search }) {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

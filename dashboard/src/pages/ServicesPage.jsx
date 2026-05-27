@@ -1,8 +1,8 @@
 import { C, Pill, Row } from '../components/ui/Shared';
 
-export default function ServicesPage({ runs }) {
+export default function ServicesPage({ runs, isMobile }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3,1fr)", gap: 14 }}>
       {[
         {
           name: "LLM Analysis", icon: "🧠", col: C.orange,

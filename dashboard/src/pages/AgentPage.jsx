@@ -1,10 +1,10 @@
 import { C, timeAgo, Pill, Row, SecTitle, trunc } from '../components/ui/Shared';
 
-export default function AgentPage({ runs, status }) {
+export default function AgentPage({ runs, status, isMobile }) {
   const latest = runs[runs.length - 1];
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" }}>
         <SecTitle>On-Chain Identity</SecTitle>
         {[

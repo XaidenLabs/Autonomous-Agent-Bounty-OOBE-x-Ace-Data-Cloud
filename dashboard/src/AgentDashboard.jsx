@@ -228,17 +228,18 @@ export default function AgentDashboard() {
             </div>
           )}
 
-          {page === "dashboard" && <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} />}
-          {page === "runs" && <RunsPage runs={runs} filtered={filtered} search={search} />}
-          {page === "payments" && <PaymentsPage runs={filtered} status={status} />}
-          {page === "agent" && <AgentPage runs={filtered} status={status} />}
-          {page === "services" && <ServicesPage runs={filtered} status={status} />}
-          {page === "sentinel" && <SentinelPage runs={filtered} status={status} />}
+          {page === "dashboard" && <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} isMobile={isMobile} />}
+          {page === "runs" && <RunsPage runs={runs} filtered={filtered} search={search} isMobile={isMobile} />}
+          {page === "payments" && <PaymentsPage runs={filtered} status={status} isMobile={isMobile} />}
+          {page === "agent" && <AgentPage runs={filtered} status={status} isMobile={isMobile} />}
+          {page === "services" && <ServicesPage runs={filtered} status={status} isMobile={isMobile} />}
+          {page === "sentinel" && <SentinelPage runs={filtered} status={status} isMobile={isMobile} />}
 
           {/* Footer */}
           <div style={{
             marginTop: 22, padding: "13px 0", borderTop: `1px solid ${C.border2}`,
-            display: "flex", justifyContent: "space-between",
+            display: "flex", justifyContent: isMobile ? "flex-start" : "space-between",
+            flexDirection: isMobile ? "column" : "row", gap: isMobile ? 8 : 0,
             fontSize: 9, color: "#2e2e2e", letterSpacing: "0.1em",
           }}>
             <span>SAP v0.9.3 · {trunc(status?.programId, 10)}</span>

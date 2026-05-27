@@ -1,11 +1,11 @@
 import { C, timeAgo, Pill, Row, SecTitle, trunc } from '../components/ui/Shared';
 
-export default function PaymentsPage({ runs, status }) {
+export default function PaymentsPage({ runs, status, isMobile }) {
   const bal = status?.escrowBalance ?? 0;
 
   return (
     <>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 12, marginBottom: 16 }}>
         {[
           { l: "Escrow Balance", v: bal.toLocaleString(), s: "lamports", c: C.green },
           { l: "Price Per Call", v: "5,000", s: "lamports/loop", c: C.orange },
@@ -19,7 +19,7 @@ export default function PaymentsPage({ runs, status }) {
           </div>
         ))}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" }}>
           <SecTitle>Escrow Configuration</SecTitle>
           {[

@@ -4,7 +4,7 @@ import Sparkline from '../components/ui/Sparkline';
 import Ring from '../components/ui/Ring';
 import Bars from '../components/ui/Bars';
 
-export default function OverviewPage({ runs, filtered, search, setPage, status }) {
+export default function OverviewPage({ runs, filtered, search, setPage, status, isMobile }) {
   const [timeframe, setTimeframe] = useState("ALL");
   const tfOptions = [
     { label: "15M", ms: 15 * 60 * 1000 },
@@ -47,7 +47,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status }
   return (
     <>
       {/* Metrics row */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 12, marginBottom: 16 }}>
         {[
           {
             label: "Total Loops", val: tfFiltered.length, sub: "+1 every 10 min",
@@ -91,7 +91,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status }
       </div>
 
       {/* Main 2-col */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 330px", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 330px", gap: 16 }}>
         <div>
           {/* Chart card */}
           <div style={{
@@ -115,7 +115,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status }
                   Latest loop — {riskLabel(latest?.riskScore ?? 0)} RISK
                 </div>
               </div>
-              <div style={{ display: "flex", gap: 6 }}>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
                 {tfOptions.map((t) => (
                   <button key={t.label} onClick={() => setTimeframe(t.label)} style={{
                     padding: "5px 9px", borderRadius: 6, border: "none",
@@ -129,7 +129,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status }
             </div>
             <Bars runs={tfRuns} highlightedRuns={tfFiltered} isSearching={!!search} />
             <div style={{
-              display: "flex", gap: 18, marginTop: 12,
+              display: "flex", gap: isMobile ? 8 : 18, marginTop: 12, flexWrap: "wrap",
               borderTop: `1px solid ${C.border2}`, paddingTop: 12,
             }}>
               {[
@@ -164,7 +164,8 @@ export default function OverviewPage({ runs, filtered, search, setPage, status }
                 letterSpacing: "0.06em",
               }}>View All →</button>
             </div>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 400 }}>
               <thead>
                 <tr>
                   {["Loop", "Insight", "Risk", "Lamports", "Status"].map(h => (
@@ -203,6 +204,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status }
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
 
