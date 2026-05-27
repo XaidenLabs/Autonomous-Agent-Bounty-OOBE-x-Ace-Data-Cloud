@@ -9,20 +9,26 @@ const NAV = [
   { id: "sentinel", label: "Sentinel" },
 ];
 
-export default function Topbar({ page, runsLength, search, setSearch, running, runLoop, cd, runs }) {
+export default function Topbar({ page, runsLength, search, setSearch, running, runLoop, cd, runs, isMobile, mobileMenuOpen, setMobileMenuOpen }) {
   const fmtCd = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
   return (
     <div style={{
-      padding: "13px 22px", background: C.side,
+      padding: isMobile ? "13px 14px" : "13px 22px", background: C.side,
       borderBottom: `1px solid ${C.border}`,
       display: "flex", alignItems: "center", justifyContent: "space-between",
       flexShrink: 0,
     }}>
-      <div>
-        <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>
-          {NAV.find(n => n.id === page)?.label}
-        </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {isMobile && (
+          <button onClick={() => setMobileMenuOpen(true)} style={{
+            background: "none", border: "none", color: C.orange, fontSize: 18, cursor: "pointer"
+          }}>☰</button>
+        )}
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>
+            {NAV.find(n => n.id === page)?.label}
+          </div>
         <div style={{ fontSize: 9, color: C.dim, marginTop: 2 }}>
           Loop #{runsLength} · {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
         </div>
@@ -30,23 +36,25 @@ export default function Topbar({ page, runsLength, search, setSearch, running, r
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         {/* Search */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 8,
-          background: "#161616", border: `1px solid ${C.border}`,
-          borderRadius: 8, padding: "7px 12px", width: 260,
-        }}>
-          <span style={{ color: C.dim, fontSize: 12 }}>⌕</span>
-          <input
-            style={{
-              background: "none", border: "none", outline: "none",
-              color: C.text, fontSize: 10, fontFamily: "inherit", flex: 1,
-            }}
-            placeholder="Search runs, tx, insights..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          {search && <span style={{ color: C.dim, cursor: "pointer", fontSize: 9 }} onClick={() => setSearch("")}>✕</span>}
-        </div>
+        {!isMobile && (
+          <div style={{
+            display: "flex", alignItems: "center", gap: 8,
+            background: "#161616", border: `1px solid ${C.border}`,
+            borderRadius: 8, padding: "7px 12px", width: 260,
+          }}>
+            <span style={{ color: C.dim, fontSize: 12 }}>⌕</span>
+            <input
+              style={{
+                background: "none", border: "none", outline: "none",
+                color: C.text, fontSize: 10, fontFamily: "inherit", flex: 1,
+              }}
+              placeholder="Search runs, tx, insights..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            {search && <span style={{ color: C.dim, cursor: "pointer", fontSize: 9 }} onClick={() => setSearch("")}>✕</span>}
+          </div>
+        )}
 
         {/* Status */}
         <div style={{
@@ -66,27 +74,29 @@ export default function Topbar({ page, runsLength, search, setSearch, running, r
           {running ? "EXECUTING" : "STANDBY"}
         </div>
 
-        {cd !== null && (
+        {(!isMobile && cd !== null) && (
           <div style={{ fontSize: 9, color: C.dim }}>
             Next <span style={{ color: C.orange, fontWeight: 700 }}>{fmtCd(cd)}</span>
           </div>
         )}
 
-        <button onClick={() => {
-          if (!runs) return;
-          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(runs, null, 2));
-          const a = document.createElement('a');
-          a.setAttribute("href", dataStr);
-          a.setAttribute("download", "agent_runs.json");
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        }} style={{
-          padding: "7px 12px", borderRadius: 7, background: "#1a1a1a",
-          border: `1px solid ${C.border}`, color: C.muted,
-          fontSize: 9, fontWeight: 600, cursor: "pointer",
-          fontFamily: "inherit", letterSpacing: "0.06em",
-        }}>↑ EXPORT</button>
+        {!isMobile && (
+          <button onClick={() => {
+            if (!runs) return;
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(runs, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "agent_runs.json");
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          }} style={{
+            padding: "7px 12px", borderRadius: 7, background: "#1a1a1a",
+            border: `1px solid ${C.border}`, color: C.muted,
+            fontSize: 9, fontWeight: 600, cursor: "pointer",
+            fontFamily: "inherit", letterSpacing: "0.06em",
+          }}>↑ EXPORT</button>
+        )}
 
         <button onClick={runLoop} disabled={running} style={{
           padding: "7px 16px", borderRadius: 7,

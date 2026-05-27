@@ -9,7 +9,9 @@ import ServicesPage from "./pages/ServicesPage";
 import SentinelPage from "./pages/SentinelPage";
 import { C, PHASES, trunc } from "./components/ui/Shared";
 
-const API_BASE = import.meta.env.VITE_API_BASE || `http://${window.location.hostname}:3005`;
+// In production (Vercel), use relative paths so vercel.json rewrites can proxy to the VPS.
+// In dev, connect directly to the VPS IP or localhost.
+const API_BASE = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_BASE || `http://${window.location.hostname}:3005`);
 const POLL_INTERVAL = 3000;
 
 export default function AgentDashboard() {
@@ -22,8 +24,20 @@ export default function AgentDashboard() {
   const [cd, setCd] = useState(null);
   const [search, setSearch] = useState("");
   const [slim, setSlim] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const cdRef = useRef(null);
   const [triggering, setTriggering] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (!mobile) setMobileMenuOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Convert daemon API data to the format the UI components expect
   const mapApiRunToUiRun = (r) => ({
@@ -145,9 +159,17 @@ export default function AgentDashboard() {
         button:hover{opacity:.88!important;}
       `}</style>
 
-      <Sidebar page={page} setPage={setPage} slim={slim} setSlim={setSlim} />
+      <Sidebar 
+        page={page} 
+        setPage={(p) => { setPage(p); setMobileMenuOpen(false); }} 
+        slim={slim} 
+        setSlim={setSlim} 
+        isMobile={isMobile}
+        mobileMenuOpen={mobileMenuOpen}
+        setMobileMenuOpen={setMobileMenuOpen}
+      />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", position: "relative" }}>
         
         <Topbar 
           page={page} 
@@ -158,6 +180,9 @@ export default function AgentDashboard() {
           runLoop={handleForceRun} 
           cd={cd} 
           runs={runs}
+          isMobile={isMobile}
+          mobileMenuOpen={mobileMenuOpen}
+          setMobileMenuOpen={setMobileMenuOpen}
         />
 
         <div style={{ flex: 1, overflowY: "auto", padding: "18px 22px" }}>

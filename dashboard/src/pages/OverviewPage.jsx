@@ -27,7 +27,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status }
 
   const handleAction = (label) => {
     if (label === "Run Now") {
-      const baseUrl = import.meta.env.VITE_API_BASE || `http://${window.location.hostname}:3005`;
+      const baseUrl = import.meta.env.PROD ? "" : (import.meta.env.VITE_API_BASE || `http://${window.location.hostname}:3005`);
       fetch(`${baseUrl}/api/run-now`, { method: "POST" });
     } else if (label === "Export") {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(runs, null, 2));

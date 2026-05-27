@@ -9,12 +9,19 @@ const NAV = [
   { id: "sentinel", label: "Sentinel", icon: "⬟" },
 ];
 
-export default function Sidebar({ page, setPage, slim, setSlim }) {
+export default function Sidebar({ page, setPage, slim, setSlim, isMobile, mobileMenuOpen, setMobileMenuOpen }) {
   return (
     <div style={{
-      width: slim ? 58 : 210, transition: "width .22s ease", flexShrink: 0,
-      background: C.side, borderRight: `1px solid ${C.border}`,
+      width: isMobile ? 250 : (slim ? 58 : 210), 
+      transition: "all .3s cubic-bezier(0.4, 0, 0.2, 1)", 
+      flexShrink: 0,
+      background: C.side, 
+      borderRight: `1px solid ${C.border}`,
       display: "flex", flexDirection: "column", overflow: "hidden",
+      position: isMobile ? "absolute" : "relative",
+      height: "100%",
+      zIndex: 100,
+      transform: isMobile ? (mobileMenuOpen ? "translateX(0)" : "translateX(-100%)") : "none",
     }}>
       {/* Logo */}
       <div style={{
@@ -40,15 +47,27 @@ export default function Sidebar({ page, setPage, slim, setSlim }) {
       </div>
 
       {/* Collapse toggle */}
-      <button onClick={() => setSlim(!slim)} style={{
-        background: "none", border: "none", color: C.dim, cursor: "pointer",
-        padding: "9px 14px", fontSize: 11, textAlign: "left",
-        display: "flex", alignItems: "center", gap: 8,
-        borderBottom: `1px solid ${C.border}`,
-      }}>
-        <span>{slim ? "▷" : "◁"}</span>
-        {!slim && <span style={{ fontSize: 9, letterSpacing: "0.08em" }}>COLLAPSE</span>}
-      </button>
+      {!isMobile && (
+        <button onClick={() => setSlim(!slim)} style={{
+          background: "none", border: "none", color: C.dim, cursor: "pointer",
+          padding: "9px 14px", fontSize: 11, textAlign: "left",
+          display: "flex", alignItems: "center", gap: 8,
+          borderBottom: `1px solid ${C.border}`,
+        }}>
+          <span>{slim ? "▷" : "◁"}</span>
+          {!slim && <span style={{ fontSize: 9, letterSpacing: "0.08em" }}>COLLAPSE</span>}
+        </button>
+      )}
+
+      {isMobile && (
+        <button onClick={() => setMobileMenuOpen(false)} style={{
+          background: "none", border: "none", color: C.dim, cursor: "pointer",
+          padding: "12px 14px", fontSize: 13, textAlign: "right",
+          borderBottom: `1px solid ${C.border}`,
+        }}>
+          ✕ Close Menu
+        </button>
+      )}
 
       {/* Nav */}
       <div style={{ flex: 1, padding: "8px 0" }}>
@@ -69,7 +88,7 @@ export default function Sidebar({ page, setPage, slim, setSlim }) {
               margin: "1px 0",
             }}>
               <span style={{ fontSize: 13, color: active ? C.orange : C.dim, flexShrink: 0 }}>{n.icon}</span>
-              {!slim && (
+              {(!slim || isMobile) && (
                 <span style={{
                   fontSize: 10, fontWeight: 600, letterSpacing: "0.05em",
                   color: active ? C.orange : "#666", whiteSpace: "nowrap",
@@ -82,7 +101,7 @@ export default function Sidebar({ page, setPage, slim, setSlim }) {
 
       {/* Bottom */}
       <div style={{ padding: "14px", borderTop: `1px solid ${C.border}` }}>
-        {!slim ? (
+        {(!slim || isMobile) ? (
           <div style={{
             background: "rgba(249,115,22,0.07)",
             border: "1px solid rgba(249,115,22,0.2)",
