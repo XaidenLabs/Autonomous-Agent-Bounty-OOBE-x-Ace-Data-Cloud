@@ -75,7 +75,7 @@ function startApiServer(
     const url = req.url?.split("?")[0];
 
     if (url === "/api/runs") {
-      res.end(JSON.stringify(readLogs(10000)));
+      res.end(JSON.stringify(readLogs(Infinity)));
     } else if (url === "/api/status") {
       let escrowBalance = 0;
       try {
