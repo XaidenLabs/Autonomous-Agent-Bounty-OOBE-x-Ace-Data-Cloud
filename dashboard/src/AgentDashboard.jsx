@@ -30,6 +30,7 @@ export default function AgentDashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const cdRef = useRef(null);
   const [triggering, setTriggering] = useState(false);
+  const [riskFilter, setRiskFilter] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
