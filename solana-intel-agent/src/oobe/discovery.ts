@@ -46,8 +46,15 @@ async function fetchAgentAccount(
     if (!info || !info.data) return null;
 
     const parsed = Accounts.parseAgentAccount(Buffer.from(info.data));
+    let rawName = parsed.name ?? "Unknown";
+    if (rawName.includes("Synapse Sentinel")) {
+      rawName = "Synapse Sentinel";
+    } else {
+      rawName = rawName.substring(0, 30).replace(/[^ -~]/g, "").trim();
+    }
+
     return {
-      name: parsed.name ?? "Unknown",
+      name: rawName,
       isActive: parsed.isOpen ?? true, // SDK returns isOpen, not isActive
     };
   } catch {

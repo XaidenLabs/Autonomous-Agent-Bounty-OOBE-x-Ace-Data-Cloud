@@ -58,10 +58,16 @@ export async function setupSentinelChannel(
   let sentinelName = "Synapse Sentinel";
   try {
     const info = await client.connection.getAccountInfo(sentinelAgentPda);
-    if (info?.data) {
-      const parsed = Accounts.parseAgentAccount(Buffer.from(info.data));
-      sentinelName = parsed.name ?? "Synapse Sentinel";
+    if (info && info.data) {
       sentinelFound = true;
+      const parsed = Accounts.parseAgentAccount(Buffer.from(info.data));
+      if (parsed.name) {
+        if (parsed.name.includes("Synapse Sentinel")) {
+          sentinelName = "Synapse Sentinel";
+        } else {
+          sentinelName = parsed.name.substring(0, 30).replace(/[^ -~]/g, "").trim();
+        }
+      }
       console.log(`[SENTINEL] ✅ Found: ${sentinelName}`);
     } else {
       console.warn("[SENTINEL] ⚠ Not found — staging env or RPC lag. Continuing...");
