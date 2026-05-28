@@ -59,7 +59,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 12, marginBottom: 16 }}>
         {[
           {
-            label: "Total Loops", val: tfFiltered.length.toLocaleString(),
+            label: "Total Loops", val: (timeframe === "ALL" && status?.totalLoggedRuns ? status.totalLoggedRuns : tfFiltered.length).toLocaleString(),
             sub: `+1 every 10 min • Next in: ${formatTime(cd)}`,
             spark: tfFiltered.map((_, i) => i), col: C.orange
           },

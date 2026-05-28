@@ -44,7 +44,7 @@ export default function RunsPage({ runs, filtered, search, isMobile, isTablet, i
           </tr>
         </thead>
         <tbody>
-          {[...filtered].reverse().map((r, i) => (
+          {[...filtered].reverse().slice(0, 500).map((r, i) => (
             <tr key={r.id || i} onClick={() => setSelectedRun(r)} style={{ cursor: "pointer", opacity: 0.9 }}>
               <td style={{ padding: "10px", fontSize: 11, color: C.orange, fontWeight: 700, borderBottom: `1px solid ${C.border2}` }}>#{r.id}</td>
               <td style={{ padding: "10px", fontSize: 9, color: C.dim, borderBottom: `1px solid ${C.border2}` }}>{timeAgo(r.timestamp)}</td>

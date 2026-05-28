@@ -75,7 +75,7 @@ function startApiServer(
     const url = req.url?.split("?")[0];
 
     if (url === "/api/runs") {
-      res.end(JSON.stringify(readLogs(200)));
+      res.end(JSON.stringify(readLogs(10000)));
     } else if (url === "/api/status") {
       let escrowBalance = 0;
       try {
@@ -103,6 +103,7 @@ function startApiServer(
           daemonStartedAt,
           lastRunTimestamp,
           lastRun: lastRunData,
+          totalLoops: countLogs(),
           totalLoggedRuns: countLogs(),
           uptime: daemonStartedAt
             ? Date.now() - new Date(daemonStartedAt).getTime()
