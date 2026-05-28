@@ -195,14 +195,7 @@ export async function writeLoopToSession(
   //   compression: u8 (0 = none)
   //   epochIndex: u32
 
-  const epochIndex = Math.floor(totalEntries / 256);
-  const epochBuf = Buffer.alloc(4);
-  epochBuf.writeUInt32LE(epochIndex, 0);
-  const epochPagePda = PublicKey.findProgramAddressSync([
-    Buffer.from("sap_epoch"),
-    sessionPda.toBuffer(),
-    epochBuf
-  ], new PublicKey(PROGRAM_ID))[0];
+
 
   console.log(`[SESSION] Writing ${payload.length} bytes (entry #${totalEntries})...`);
 
@@ -211,9 +204,19 @@ export async function writeLoopToSession(
   let sig: string = "";
 
   while (!success && attempts < 10) {
+    const sequenceToWrite = loopWriteCount - 1;
+    const epochIndex = Math.floor(sequenceToWrite / 256);
+    const epochBuf = Buffer.alloc(4);
+    epochBuf.writeUInt32LE(epochIndex, 0);
+    const epochPagePda = PublicKey.findProgramAddressSync([
+      Buffer.from("sap_epoch"),
+      sessionPda.toBuffer(),
+      epochBuf
+    ], new PublicKey(PROGRAM_ID))[0];
+
     try {
       const ix = await client.vault.inscribeMemory({
-        sequence: loopWriteCount - 1,       // u32 (0-based)
+        sequence: sequenceToWrite,          // u32 (0-based)
         encryptedData: payload,             // bytes (Buffer)
         nonce: sha256Arr12(`nonce-${loopWriteCount}`), // [u8; 12]
         contentHash: sha256Arr32(payload),  // [u8; 32]
@@ -236,8 +239,8 @@ export async function writeLoopToSession(
       success = true;
     } catch (err: any) {
       const msg = err.message || "";
-      if (msg.includes("InvalidSequence") || msg.includes("bad seq") || msg.includes("0x179c")) {
-        console.warn(`[SESSION] Stale RPC: sequence ${loopWriteCount - 1} failed. Incrementing and probing...`);
+      if (msg.includes("InvalidSequence") || msg.includes("bad seq") || msg.includes("0x179c") || msg.includes("EpochMismatch") || msg.includes("0x17a1")) {
+        console.warn(`[SESSION] Sequence/Epoch mismatch at ${sequenceToWrite}. Incrementing and probing...`);
         loopWriteCount++;
         totalEntries++;
         attempts++;
