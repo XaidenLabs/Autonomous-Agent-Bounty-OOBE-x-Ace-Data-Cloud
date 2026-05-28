@@ -205,7 +205,7 @@ export async function writeLoopToSession(
 
   while (!success && attempts < 10) {
     const sequenceToWrite = loopWriteCount - 1;
-    const epochIndex = Math.floor(sequenceToWrite / 256);
+    const epochIndex = 0; // Math.floor(sequenceToWrite / 256);
     const epochBuf = Buffer.alloc(4);
     epochBuf.writeUInt32LE(epochIndex, 0);
     const epochPagePda = PublicKey.findProgramAddressSync([
