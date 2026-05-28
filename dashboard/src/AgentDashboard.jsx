@@ -140,12 +140,20 @@ export default function AgentDashboard() {
     }
   };
 
-  const filtered = runs.filter(r => 
-    !search || 
-    r.insight.toLowerCase().includes(search.toLowerCase()) || 
-    r.settlementTx.includes(search) || 
-    String(r.id).includes(search)
-  );
+  const filtered = runs.filter(r => {
+    let matchSearch = !search || 
+      r.insight.toLowerCase().includes(search.toLowerCase()) || 
+      r.settlementTx.includes(search) || 
+      String(r.id).includes(search);
+    
+    let matchRisk = true;
+    if (riskFilter === 'low') matchRisk = !r.hasError && r.riskScore < 30;
+    else if (riskFilter === 'medium') matchRisk = !r.hasError && r.riskScore >= 30 && r.riskScore < 60;
+    else if (riskFilter === 'high') matchRisk = !r.hasError && r.riskScore >= 60;
+    else if (riskFilter === 'failed') matchRisk = r.hasError;
+
+    return matchSearch && matchRisk;
+  });
 
   return (
     <div style={{
@@ -235,7 +243,7 @@ export default function AgentDashboard() {
             </div>
           )}
 
-          {page === "dashboard" && <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} cd={cd} />}
+          {page === "dashboard" && <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} cd={cd} riskFilter={riskFilter} setRiskFilter={setRiskFilter} />}
           {page === "runs" && <RunsPage runs={runs} filtered={filtered} search={search} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} />}
           {page === "payments" && <PaymentsPage runs={filtered} status={status} isMobile={isMobile} />}
           {page === "agent" && <AgentPage runs={filtered} status={status} isMobile={isMobile} />}

@@ -5,7 +5,7 @@ import Ring from '../components/ui/Ring';
 import Bars from '../components/ui/Bars';
 import RunModal from '../components/ui/RunModal';
 
-export default function OverviewPage({ runs, filtered, search, setPage, status, isMobile, isTablet, isNarrow, cd }) {
+export default function OverviewPage({ runs, filtered, search, setPage, status, isMobile, isTablet, isNarrow, cd, riskFilter, setRiskFilter }) {
   const [timeframe, setTimeframe] = useState("ALL");
   const [selectedRun, setSelectedRun] = useState(null);
 
@@ -145,14 +145,22 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
               borderTop: `1px solid ${C.border2}`, paddingTop: 12,
             }}>
               {[
-                { l: "Low (<30)", c: C.green, n: tfFiltered.filter(r => !r.hasError && r.riskScore < 30).length },
-                { l: "Medium", c: C.orange, n: tfFiltered.filter(r => !r.hasError && r.riskScore >= 30 && r.riskScore < 60).length },
-                { l: "High (>60)", c: C.red, n: tfFiltered.filter(r => !r.hasError && r.riskScore >= 60).length },
-                { l: "Failed", c: C.dim, n: tfFiltered.filter(r => r.hasError).length },
+                { l: "Low (<30)", k: "low", c: C.green, n: tfRuns.filter(r => !r.hasError && r.riskScore < 30).length },
+                { l: "Medium", k: "medium", c: C.orange, n: tfRuns.filter(r => !r.hasError && r.riskScore >= 30 && r.riskScore < 60).length },
+                { l: "High (>60)", k: "high", c: C.red, n: tfRuns.filter(r => !r.hasError && r.riskScore >= 60).length },
+                { l: "Failed", k: "failed", c: C.dim, n: tfRuns.filter(r => r.hasError).length },
               ].map(b => (
-                <div key={b.l} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <div 
+                  key={b.l} 
+                  onClick={() => setRiskFilter && setRiskFilter(riskFilter === b.k ? null : b.k)}
+                  style={{ 
+                    display: "flex", alignItems: "center", gap: 6, cursor: "pointer",
+                    padding: "4px 8px", borderRadius: 6,
+                    background: riskFilter === b.k ? "rgba(255,255,255,0.05)" : "transparent",
+                    border: `1px solid ${riskFilter === b.k ? b.c : "transparent"}`
+                  }}>
                   <div style={{ width: 8, height: 8, borderRadius: 2, background: b.c, flexShrink: 0 }} />
-                  <span style={{ fontSize: 9, color: C.dim }}>{b.l}</span>
+                  <span style={{ fontSize: 9, color: riskFilter === b.k ? "#fff" : C.dim }}>{b.l}</span>
                   <span style={{ fontSize: 10, color: b.c, fontWeight: 700 }}>{b.n}</span>
                 </div>
               ))}
