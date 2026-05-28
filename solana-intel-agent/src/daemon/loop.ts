@@ -47,7 +47,7 @@ const LOOP_INTERVAL_MS = parseInt(process.env.LOOP_INTERVAL_MS || "600000");
 const API_PORT = parseInt(process.env.API_PORT || "3001");
 
 // ── Global state ───────────────────────────────────────────────────────────
-let loopCount = 0;
+let loopCount = countLogs();
 let isSetupDone = false;
 let lastRunData: object | null = null;
 let lastRunTimestamp: string | null = null;
