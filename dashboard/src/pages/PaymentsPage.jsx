@@ -51,8 +51,8 @@ export default function PaymentsPage({ runs, status, isMobile }) {
         </div>
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" }}>
           <SecTitle>Recent Settlements</SecTitle>
-          {[...runs].reverse().slice(0, 7).map(r => (
-            <div key={r.id} style={{
+          {[...runs].reverse().slice(0, 7).map((r, i) => (
+            <div key={r.uid || `pay-${i}`} style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
               padding: "10px 0", borderBottom: `1px solid ${C.border2}`,
             }}>

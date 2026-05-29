@@ -9,7 +9,7 @@ export default function Bars({ runs, highlightedRuns, isSearching }) {
       {displayRuns.map((r, i) => {
           const isHighlighted = !isSearching || highlightedRuns.some(h => h.id === r.id);
           return (
-            <div key={r.id || i}
+            <div key={i}
               title={`Loop ${r.id || r.loopId}: ${r.riskScore}`}
               style={{
                 flex: 1, borderRadius: "2px 2px 0 0",

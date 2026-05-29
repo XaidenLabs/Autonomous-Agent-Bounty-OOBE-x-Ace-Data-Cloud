@@ -32,8 +32,8 @@ export default function SentinelPage({ runs, status, isMobile }) {
       </div>
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "16px 18px" }}>
         <SecTitle>Sentinel Call Log</SecTitle>
-        {[...runs].reverse().slice(0, 8).map(r => (
-          <div key={r.id} style={{
+        {[...runs].reverse().slice(0, 8).map((r, i) => (
+          <div key={r.uid || `sent-${i}`} style={{
             display: "flex", justifyContent: "space-between", alignItems: "center",
             padding: "10px 0", borderBottom: `1px solid ${C.border2}`,
           }}>

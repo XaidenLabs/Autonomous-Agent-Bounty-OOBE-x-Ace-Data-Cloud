@@ -5,6 +5,7 @@ import Ring from '../components/ui/Ring';
 import Bars from '../components/ui/Bars';
 import RunModal from '../components/ui/RunModal';
 
+
 export default function OverviewPage({ runs, filtered, search, setPage, status, isMobile, isTablet, isNarrow, cd, riskFilter, setRiskFilter }) {
   const [timeframe, setTimeframe] = useState("ALL");
   const [selectedRun, setSelectedRun] = useState(null);
@@ -56,26 +57,26 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
   return (
     <>
       {/* Metrics row */}
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 12, marginBottom: 16 }}>
+      <div data-tour="metrics-row" style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2,1fr)" : "repeat(4,1fr)", gap: 12, marginBottom: 16 }}>
         {[
           {
             label: "Total Loops", val: (timeframe === "ALL" && status?.totalLoggedRuns ? status.totalLoggedRuns : tfFiltered.length).toLocaleString(),
             sub: `+1 every 10 min • Next in: ${formatTime(cd)}`,
-            spark: tfFiltered.map((_, i) => i), col: C.orange
+            spark: tfFiltered.map((_, i) => i), col: C.orange,
           },
           {
             label: "Avg Risk Score", val: avgRisk, sub: riskLabel(avgRisk) + " risk",
-            spark: tfFiltered.map(r => r.riskScore), col: riskColor(avgRisk)
+            spark: tfFiltered.map(r => r.riskScore), col: riskColor(avgRisk),
           },
           {
             label: "Total Lamports", val: totalLam.toLocaleString(),
             sub: `≈ $${(totalLam * 0.00000002).toFixed(4)}`,
-            spark: tfFiltered.map(r => r.amountLamports), col: C.orange
+            spark: tfFiltered.map(r => r.amountLamports), col: C.orange,
           },
           {
             label: "Escrow Balance", val: bal.toLocaleString(),
             sub: `${Math.floor(bal / 5000)} calls left`,
-            spark: runs.map(() => Math.floor(Math.random() * 5 + 3)), col: C.green
+            spark: runs.map(() => Math.floor(Math.random() * 5 + 3)), col: C.green,
           },
         ].map(m => (
           <div key={m.label} style={{
@@ -104,7 +105,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 330px", gap: 16 }}>
         <div style={{ minWidth: 0 }}>
           {/* Chart card */}
-          <div style={{
+          <div data-tour="risk-chart" style={{
             background: C.card, border: `1px solid ${C.border}`,
             borderRadius: 12, padding: "16px 18px", marginBottom: 16,
             overflow: "hidden"
@@ -168,7 +169,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
           </div>
 
           {/* Run table */}
-          <div style={{
+          <div data-tour="run-table" style={{
             background: C.card, border: `1px solid ${C.border}`,
             borderRadius: 12, padding: "16px 18px",
           }}>
@@ -208,7 +209,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
               </thead>
               <tbody>
                 {[...tfFiltered].slice(-5).reverse().map(r => (
-                  <tr key={r.id} onClick={() => setSelectedRun(r)} style={{ animation: "fadein 0.3s ease", cursor: "pointer", opacity: 0.9 }}>
+                  <tr key={r.uid} onClick={() => setSelectedRun(r)} style={{ animation: "fadein 0.3s ease", cursor: "pointer", opacity: 0.9 }}>
                     <td style={{
                       padding: "10px", fontSize: 11, color: C.orange, fontWeight: 700,
                       borderBottom: `1px solid ${C.border2}`
@@ -308,14 +309,14 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
             ))}
           </div>
 
-          {/* Quick actions (like the reference UI) */}
-          <div style={{
+          {/* Quick actions */}
+          <div data-tour="quick-actions" style={{
             background: C.card, border: `1px solid ${C.border}`,
             borderRadius: 12, padding: "15px 17px",
           }}>
             <div style={{
               fontSize: 9, color: C.dim, letterSpacing: "0.14em",
-              textTransform: "uppercase", marginBottom: 12
+              textTransform: "uppercase", marginBottom: 12,
             }}>Quick Actions</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
               {[
@@ -346,7 +347,7 @@ export default function OverviewPage({ runs, filtered, search, setPage, status, 
           }}>
             <div style={{
               fontSize: 9, color: C.dim, letterSpacing: "0.14em",
-              textTransform: "uppercase", marginBottom: 12
+              textTransform: "uppercase", marginBottom: 12,
             }}>◎ SAP Network</div>
             {[
               { l: "Total agents", v: latest?.networkAgents ?? 0 },

@@ -9,7 +9,7 @@ const NAV = [
   { id: "sentinel", label: "Sentinel" },
 ];
 
-export default function Topbar({ page, runsLength, search, setSearch, running, runLoop, cd, runs, isMobile, mobileMenuOpen, setMobileMenuOpen }) {
+export default function Topbar({ page, runsLength, search, setSearch, running, runLoop, cd, runs, isMobile, mobileMenuOpen, setMobileMenuOpen, onStartTour }) {
   const fmtCd = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
   return (
@@ -29,20 +29,22 @@ export default function Topbar({ page, runsLength, search, setSearch, running, r
           <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>
             {NAV.find(n => n.id === page)?.label}
           </div>
-        <div style={{ fontSize: 9, color: C.dim, marginTop: 2 }}>
-          Loop #{runsLength} · {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+          <div style={{ fontSize: 9, color: C.dim, marginTop: 2 }}>
+            Loop #{runsLength} · {new Date().toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+          </div>
         </div>
       </div>
-    </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         {/* Search */}
         {!isMobile && (
-          <div style={{
-            display: "flex", alignItems: "center", gap: 8,
-            background: "#161616", border: `1px solid ${C.border}`,
-            borderRadius: 8, padding: "7px 12px", width: 260,
-          }}>
+          <div
+            data-tour="topbar-search"
+            style={{
+              display: "flex", alignItems: "center", gap: 8,
+              background: "#161616", border: `1px solid ${C.border}`,
+              borderRadius: 8, padding: "7px 12px", width: 260,
+            }}>
             <span style={{ color: C.dim, fontSize: 12 }}>⌕</span>
             <input
               style={{
@@ -57,7 +59,7 @@ export default function Topbar({ page, runsLength, search, setSearch, running, r
           </div>
         )}
 
-        {/* Status */}
+        {/* Status pill */}
         <div style={{
           display: "flex", alignItems: "center", gap: 6,
           padding: "6px 11px", borderRadius: 20,
@@ -99,15 +101,39 @@ export default function Topbar({ page, runsLength, search, setSearch, running, r
           }}>↑ EXPORT</button>
         )}
 
-        <button onClick={runLoop} disabled={running} style={{
-          padding: "7px 16px", borderRadius: 7,
-          background: running ? "#1a1a1a" : "linear-gradient(135deg,#f97316,#ea580c)",
-          border: "none", color: running ? C.dim : "#fff",
-          fontSize: 9, fontWeight: 700, cursor: running ? "not-allowed" : "pointer",
-          fontFamily: "inherit", letterSpacing: "0.08em",
-          display: "flex", alignItems: "center", gap: 6,
-          animation: !running ? "pulseRing 2.5s infinite" : "none",
-        }}>
+        {/* ? — replay tour */}
+        {onStartTour && (
+          <button
+            onClick={onStartTour}
+            title="Replay onboarding tour"
+            style={{
+              width: 30, height: 30, borderRadius: "50%",
+              background: "#1a1a1a", border: `1px solid ${C.border}`,
+              color: C.dim, fontSize: 11, fontWeight: 700,
+              cursor: "pointer", fontFamily: "inherit",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              flexShrink: 0, transition: "border-color 0.2s, color 0.2s",
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = C.orange; e.currentTarget.style.color = C.orange; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.dim; }}
+          >?</button>
+        )}
+
+        {/* Run Now */}
+        <button
+          data-tour="run-now-btn"
+          onClick={runLoop}
+          disabled={running}
+          style={{
+            padding: "7px 16px", borderRadius: 7,
+            background: running ? "#1a1a1a" : "linear-gradient(135deg,#f97316,#ea580c)",
+            border: "none", color: running ? C.dim : "#fff",
+            fontSize: 9, fontWeight: 700, cursor: running ? "not-allowed" : "pointer",
+            fontFamily: "inherit", letterSpacing: "0.08em",
+            display: "flex", alignItems: "center", gap: 6,
+            animation: !running ? "pulseRing 2.5s infinite" : "none",
+          }}
+        >
           {running ? "⏳ RUNNING..." : "▶ NEW RUN"}
         </button>
       </div>

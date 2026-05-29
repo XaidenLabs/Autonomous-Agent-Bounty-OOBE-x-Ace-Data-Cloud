@@ -8,6 +8,7 @@ import AgentPage from "./pages/AgentPage";
 import ServicesPage from "./pages/ServicesPage";
 import SentinelPage from "./pages/SentinelPage";
 import { C, PHASES, trunc } from "./components/ui/Shared";
+import OnboardingTour, { useOnboardingTour } from "./components/ui/OnboardingTour";
 
 // In production (Vercel), use relative paths so vercel.json rewrites can proxy to the VPS.
 // In dev, connect directly to the VPS IP or localhost.
@@ -31,6 +32,7 @@ export default function AgentDashboard() {
   const cdRef = useRef(null);
   const [triggering, setTriggering] = useState(false);
   const [riskFilter, setRiskFilter] = useState(null);
+  const { tourOpen, startTour, closeTour } = useOnboardingTour();
 
   useEffect(() => {
     const handleResize = () => {
@@ -45,8 +47,10 @@ export default function AgentDashboard() {
   }, []);
 
   // Convert daemon API data to the format the UI components expect
-  const mapApiRunToUiRun = (r) => ({
+  const mapApiRunToUiRun = (r, idx) => ({
     id: r.loopCount || r.loopId,
+    // uid is guaranteed unique — used as React key instead of id
+    uid: `${new Date(r.timestamp).getTime()}-${r.loopId || r.loopCount || idx}`,
     loopId: r.loopId,
     timestamp: new Date(r.timestamp).getTime(),
     riskScore: r.aceData?.riskScore ?? (r.partialResults?.riskScore ?? 0),
@@ -77,7 +81,9 @@ export default function AgentDashboard() {
       // The API returns newest first. The UI expects oldest first (so newest is at the end).
       const formattedRuns = (Array.isArray(rawRuns) ? rawRuns : [])
         .map(mapApiRunToUiRun)
-        .reverse();
+        .reverse()
+        // Stamp uid AFTER reverse so index is stable and always unique
+        .map((r, i) => ({ ...r, uid: `run-${i}` }));
       
       setRuns(formattedRuns);
       setStatus(statusData);
@@ -198,6 +204,7 @@ export default function AgentDashboard() {
           isMobile={isMobile}
           mobileMenuOpen={mobileMenuOpen}
           setMobileMenuOpen={setMobileMenuOpen}
+          onStartTour={startTour}
         />
 
         <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: isMobile ? "14px 12px" : "18px 22px" }}>
@@ -250,6 +257,8 @@ export default function AgentDashboard() {
           {page === "agent" && <AgentPage runs={filtered} status={status} isMobile={isMobile} />}
           {page === "services" && <ServicesPage runs={filtered} status={status} isMobile={isMobile} />}
           {page === "sentinel" && <SentinelPage runs={filtered} status={status} isMobile={isMobile} />}
+
+          <OnboardingTour open={tourOpen} onClose={closeTour} />
 
           {/* Footer */}
           <div style={{
