@@ -587,6 +587,204 @@
   }
 
   /* ════════════════════════════
+     PIPELINE (How It Works)
+  ════════════════════════════ */
+  .pw {
+    margin-top: 8px;
+    background: #08101e;
+    border: 1px solid rgba(249,115,22,0.1);
+    border-radius: 16px;
+    padding: 28px 24px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  /* dot-grid texture */
+  .pw::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(249,115,22,0.07) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* ambient glow orb */
+  .pw::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249,115,22,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .pw-row {
+    display: grid;
+    grid-template-columns: 1fr 30px 1fr 30px 1fr 30px 1fr;
+    gap: 0;
+    align-items: stretch;
+    position: relative;
+    z-index: 1;
+  }
+  /* Pipeline cards */
+  .pw-card {
+    flex: 1;
+    background: rgba(12, 18, 35, 0.96);
+    border: 1px solid rgba(249,115,22,0.14);
+    border-radius: 12px;
+    padding: 20px 18px 18px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    cursor: default;
+    transition: border-color 0.22s, transform 0.22s, box-shadow 0.22s;
+    display: flex;
+    flex-direction: column;
+  }
+  .pw-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--orange) 0%, transparent 65%);
+    opacity: 0;
+    transition: opacity 0.22s;
+  }
+  .pw-card:hover {
+    border-color: rgba(249,115,22,0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.55), 0 0 40px rgba(249,115,22,0.06);
+  }
+  .pw-card:hover::after { opacity: 1; }
+  .pw-card-final {
+    border-color: rgba(249,115,22,0.3) !important;
+    background: rgba(249,115,22,0.04) !important;
+  }
+  /* Large faded step number */
+  .pw-n {
+    position: absolute;
+    top: 10px; right: 13px;
+    font-family: var(--mono);
+    font-size: 40px;
+    font-weight: 700;
+    color: rgba(249,115,22,0.07);
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+    letter-spacing: -0.03em;
+  }
+  .pw-n-hot { color: rgba(249,115,22,0.13); }
+  /* Icon box */
+  .pw-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: rgba(249,115,22,0.09);
+    border: 1px solid rgba(249,115,22,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+    transition: background 0.22s, border-color 0.22s;
+  }
+  .pw-icon-hot {
+    background: rgba(249,115,22,0.18) !important;
+    border-color: rgba(249,115,22,0.4) !important;
+  }
+  .pw-card:hover .pw-icon {
+    background: rgba(249,115,22,0.16);
+    border-color: rgba(249,115,22,0.38);
+  }
+  .pw-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 7px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .pw-desc {
+    font-size: 10.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+    margin-bottom: 12px;
+  }
+  .pw-file {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.07em;
+    color: rgba(249,115,22,0.5);
+    background: rgba(249,115,22,0.06);
+    border: 1px solid rgba(249,115,22,0.12);
+    border-radius: 3px;
+    padding: 2px 6px;
+    display: inline-block;
+    margin-top: auto;
+  }
+  .pw-file-hot {
+    color: var(--orange) !important;
+    border-color: rgba(249,115,22,0.28) !important;
+  }
+  /* Arrow separators */
+  .pw-sep {
+    width: 30px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+  .pw-sep span {
+    font-size: 13px;
+    color: rgba(249,115,22,0.3);
+    position: relative;
+    z-index: 1;
+  }
+  .pw-sep::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 50%;
+    height: 1px;
+    background: rgba(249,115,22,0.1);
+  }
+  /* Spacer in row 2 */
+  .pw-spacer { grid-column: span 2; }
+  /* Row divider */
+  .pw-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 14px 0;
+    position: relative;
+    z-index: 1;
+  }
+  .pw-div-ln {
+    flex: 1;
+    height: 1px;
+    background: rgba(249,115,22,0.08);
+  }
+  .pw-div-lbl {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: rgba(249,115,22,0.3);
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+  /* Mobile */
+  @media (max-width: 640px) {
+    .pw { padding: 18px 14px; }
+    .pw-row { grid-template-columns: 1fr; gap: 8px; }
+    .pw-sep { width: 100%; height: 24px; }
+    .pw-sep::before { top: 50%; left: 50%; width: 1px; height: 100%; transform: translateX(-50%); }
+    .pw-spacer { display: none; }
+  }
+
+  /* ════════════════════════════
      METRICS
   ════════════════════════════ */
   .metrics-grid {
@@ -1345,106 +1543,99 @@
     </div>
     <h2>How the Agent Works</h2>
     <p class="sec-body">
-      A single <code>npm start</code> command launches the daemon. From that point every
-      phase executes autonomously — no human input, no manual triggers, no intervention.
+      A single <code>npm start</code> command launches the daemon. Every phase then executes
+      autonomously — no human input, no manual triggers, no intervention required.
     </p>
 
-    <div class="aflow" id="aflowWrap">
-      <div class="aflow-inner" id="aflowInner">
+    <div class="pw" id="pw">
 
-        <!-- SVG CONNECTOR LINES -->
-        <svg class="aflow-svg" id="aflowSvg" viewBox="0 0 860 500"
-             fill="none" xmlns="http://www.w3.org/2000/svg"
-             preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <filter id="lglow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <filter id="dglow" x="-120%" y="-120%" width="340%" height="340%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b"/>
-              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <radialGradient id="radN1" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#f97316" stop-opacity="0.1"/>
-              <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
-            </radialGradient>
-            <radialGradient id="radN4" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#f97316" stop-opacity="0.14"/>
-              <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
-            </radialGradient>
-          </defs>
-          <ellipse id="glow1" cx="-999" cy="-999" rx="90" ry="55" fill="url(#radN1)" opacity="0"/>
-          <ellipse id="glow4" cx="-999" cy="-999" rx="100" ry="55" fill="url(#radN4)" opacity="0"/>
-          <!-- Base tracks -->
-          <path id="seg1" d="" stroke="rgba(249,115,22,0.1)" stroke-width="2.5" stroke-linecap="round"/>
-          <path id="seg2" d="" stroke="rgba(249,115,22,0.1)" stroke-width="2.5" stroke-linecap="round"/>
-          <path id="seg3" d="" stroke="rgba(249,115,22,0.1)" stroke-width="2.5" stroke-linecap="round"/>
-          <!-- Animated beams -->
-          <path id="beam1" d="" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" filter="url(#lglow)" opacity="0.9"/>
-          <path id="beam2" d="" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" filter="url(#lglow)" opacity="0.9"/>
-          <path id="beam3" d="" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" filter="url(#lglow)" opacity="0.9"/>
-          <!-- Traveling particles -->
-          <circle id="dot1" r="5" fill="#f97316" opacity="0" filter="url(#dglow)"/>
-          <circle id="dot2" r="4" fill="#fb923c" opacity="0" filter="url(#dglow)"/>
-          <circle id="dot3" r="4" fill="#fdba74" opacity="0" filter="url(#dglow)"/>
-        </svg>
+      <!-- Row 1: Steps 01 – 04 -->
+      <div class="pw-row">
 
-        <!-- NODE 1: DISCOVER (top-centre) -->
-        <div class="afl-node" id="n-discover" style="left:33%;top:5%">
-          <div class="afl-node-step">Step 01</div>
-          <div class="afl-node-top">
-            <div class="afl-node-iconbox">◎</div>
-            <div class="afl-node-name">Discover</div>
-          </div>
-          <div class="afl-node-desc">Scans SAP registry on-chain, fetches Sentinel's live profile, reads A2A-compatible agents.</div>
-          <span class="afl-node-tag">src/oobe/discovery.ts</span>
+        <div class="pw-card" id="pwc1">
+          <span class="pw-n">01</span>
+          <div class="pw-icon">&#9678;</div>
+          <div class="pw-name">Discover</div>
+          <div class="pw-desc">Scans SAP on-chain registry, fetches Sentinel's live profile, reads all A2A-compatible agents across the network.</div>
+          <span class="pw-file">src/oobe/discovery.ts</span>
         </div>
-        <div class="afl-badge" id="b-sap" style="left:21%;top:9%"><span class="afl-bi">⬡</span><span class="afl-bt">SAP</span></div>
-        <div class="afl-badge" id="b-rpc" style="left:57%;top:2%"><span class="afl-bi">🌐</span><span class="afl-bt">RPC</span></div>
 
-        <!-- NODE 2: ACE DATA (right) -->
-        <div class="afl-node" id="n-ace" style="left:63%;top:30%">
-          <div class="afl-node-step">Steps 02 – 04</div>
-          <div class="afl-node-top">
-            <div class="afl-node-iconbox">✦</div>
-            <div class="afl-node-name">Ace Data Cloud</div>
-          </div>
-          <div class="afl-node-desc">LLM analysis · Image generation · Audio synthesis. Three distinct AI services via x402 payments.</div>
-          <span class="afl-node-tag">src/ace/ · 3 services</span>
+        <div class="pw-sep"><span>&#8594;</span></div>
+
+        <div class="pw-card" id="pwc2">
+          <span class="pw-n">02</span>
+          <div class="pw-icon">🧠</div>
+          <div class="pw-name">Analyze</div>
+          <div class="pw-desc">Calls Ace Data Cloud LLM (<code>gpt-4o-mini</code>) to produce a structured risk score 0–100 and Solana market insights.</div>
+          <span class="pw-file">src/ace/llm.ts · Service 1</span>
         </div>
-        <div class="afl-badge" id="b-llm" style="right:1%;top:31%"><span class="afl-bi">🧠</span><span class="afl-bt">LLM</span></div>
-        <div class="afl-badge" id="b-img" style="right:1%;top:43%"><span class="afl-bi">🎨</span><span class="afl-bt">IMG</span></div>
-        <div class="afl-badge" id="b-aud" style="right:1%;top:55%"><span class="afl-bi">🎵</span><span class="afl-bt">SFX</span></div>
 
-        <!-- NODE 3: SENTINEL (left) -->
-        <div class="afl-node" id="n-sentinel" style="left:6%;top:55%">
-          <div class="afl-node-step">Step 05</div>
-          <div class="afl-node-top">
-            <div class="afl-node-iconbox">⬟</div>
-            <div class="afl-node-name">Sentinel</div>
-          </div>
-          <div class="afl-node-desc">Pays Synapse Sentinel via x402 every loop — mandatory SAP validation service.</div>
-          <span class="afl-node-tag">src/sentinel/interact.ts</span>
+        <div class="pw-sep"><span>&#8594;</span></div>
+
+        <div class="pw-card" id="pwc3">
+          <span class="pw-n">03</span>
+          <div class="pw-icon">🎨</div>
+          <div class="pw-name">Visualize</div>
+          <div class="pw-desc">Generates a visual intelligence report card via Ace Data image generation. Each loop produces a unique artifact.</div>
+          <span class="pw-file">src/ace/image.ts · Service 2</span>
         </div>
-        <div class="afl-badge" id="b-x402" style="left:1%;top:57%"><span class="afl-bi">🔐</span><span class="afl-bt">x402</span></div>
-        <div class="afl-badge" id="b-syn"  style="left:4%;top:48%"><span class="afl-bi">⬡</span><span class="afl-bt">Synapse</span></div>
 
-        <!-- NODE 4: INSCRIBE + SETTLE (bottom-centre) -->
-        <div class="afl-node afl-node-final" id="n-settle" style="left:33%;top:78%">
-          <div class="afl-node-step">Steps 06 – 07</div>
-          <div class="afl-node-top">
-            <div class="afl-node-iconbox afl-node-iconbox-hot">⬡</div>
-            <div class="afl-node-name">Inscribe &amp; Settle</div>
-          </div>
-          <div class="afl-node-desc">Writes to <code>SessionLedger</code> PDA. Calls <code>settleCallsV2</code> — <strong style="color:var(--orange)">5,000 lam</strong> debited per loop.</div>
-          <span class="afl-node-tag afl-node-tag-hot">settleCallsV2 · Volume Generated</span>
+        <div class="pw-sep"><span>&#8594;</span></div>
+
+        <div class="pw-card" id="pwc4">
+          <span class="pw-n">04</span>
+          <div class="pw-icon">🎵</div>
+          <div class="pw-name">Sonify</div>
+          <div class="pw-desc">Produces a 10-second sentiment audio clip via Ace Data audio generation. Third and final AI service.</div>
+          <span class="pw-file">src/ace/music.ts · Service 3</span>
         </div>
-        <div class="afl-badge" id="b-ses" style="left:29%;top:96%"><span class="afl-bi">📝</span><span class="afl-bt">Session PDA</span></div>
-        <div class="afl-badge" id="b-esc" style="left:62%;top:92%"><span class="afl-bi">⬡</span><span class="afl-bt">EscrowV2</span></div>
 
-      </div><!-- /aflow-inner -->
-    </div><!-- /aflow -->
+      </div><!-- /pw-row -->
+
+      <!-- Row divider -->
+      <div class="pw-divider">
+        <div class="pw-div-ln"></div>
+        <div class="pw-div-lbl">↓ &nbsp;continues</div>
+        <div class="pw-div-ln"></div>
+      </div>
+
+      <!-- Row 2: Steps 05 – 07 -->
+      <div class="pw-row">
+
+        <div class="pw-card" id="pwc5">
+          <span class="pw-n">05</span>
+          <div class="pw-icon">⬟</div>
+          <div class="pw-name">Sentinel</div>
+          <div class="pw-desc">Pays Synapse Sentinel via x402 using escrow channel nonce 1. Mandatory SAP validation service called every single loop.</div>
+          <span class="pw-file">src/sentinel/interact.ts</span>
+        </div>
+
+        <div class="pw-sep"><span>&#8594;</span></div>
+
+        <div class="pw-card" id="pwc6">
+          <span class="pw-n">06</span>
+          <div class="pw-icon">📝</div>
+          <div class="pw-name">Inscribe</div>
+          <div class="pw-desc">Writes this loop's intelligence permanently to the <code>SessionLedger</code> PDA. Seals every 10 runs into an immutable <code>LedgerPage</code>.</div>
+          <span class="pw-file">src/oobe/session.ts</span>
+        </div>
+
+        <div class="pw-sep"><span>&#8594;</span></div>
+
+        <div class="pw-card pw-card-final" id="pwc7">
+          <span class="pw-n pw-n-hot">07</span>
+          <div class="pw-icon pw-icon-hot">⬡</div>
+          <div class="pw-name">Settle</div>
+          <div class="pw-desc">Executes <code>settleCallsV2</code> CPI — debits EscrowV2 PDA by <strong style="color:var(--orange)">5,000 lamports</strong>. Real verifiable payment volume per loop.</div>
+          <span class="pw-file pw-file-hot">settleCallsV2 · Volume Generated</span>
+        </div>
+
+        <!-- Spacer so row 2 doesn't stretch to fill all 4 columns -->
+        <div class="pw-spacer"></div>
+
+      </div><!-- /pw-row -->
+
+    </div><!-- /pw -->
   </section>
 
   <!-- CODE -->
@@ -1493,14 +1684,13 @@
       </div>
 <pre><span class="cm">// Category 1: Real payment volume via settleCallsV2 CPI</span>
 <span class="kw">const</span> <span class="vr">txSig</span> <span class="op">=</span> <span class="kw">await</span> <span class="vr">client</span>.escrow.<span class="fn">settleCallsV2</span>({
-  escrowNonce:  <span class="kw">new</span> <span class="fn">BN</span>(<span class="num">0</span>),
-  callsToSettle: <span class="kw">new</span> <span class="fn">BN</span>(<span class="num">1</span>),
+  callsToSettle:     <span class="kw">new</span> <span class="fn">BN</span>(<span class="num">1</span>),
   serviceHash,
-  wallet:           <span class="vr">keypair</span>.publicKey,
-  agent:            <span class="vr">agentPda</span>,
-  escrow:           <span class="vr">escrowPda</span>,       <span class="cm">// x402 EscrowV2 PDA</span>
+  wallet:            <span class="vr">keypair</span>.publicKey,
+  agent:             <span class="vr">agentPda</span>,
+  escrow:            <span class="vr">escrowPda</span>,       <span class="cm">// x402 EscrowV2 PDA</span>
   settlementReceipt: <span class="vr">receiptPda</span>,
-  signer:           <span class="vr">keypair</span>,
+  signer:            <span class="vr">keypair</span>,
 });<span class="cm">  // ← real on-chain CPI, 5,000 lam per loop</span></pre>
     </div>
 
@@ -1927,65 +2117,32 @@
       <span class="footer-sep">·</span>
       <a href="https://synapse.oobeprotocol.ai" target="_blank" rel="noopener">Synapse Gateway</a>
       <span class="footer-sep">·</span>
-      <a href="https://github.com/XaidenLabs/Autonomous-Agent-Bounty-OOBE-x-Ace-Data-Cloud" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://github.com/XaidenLabs/Autonomous-Agent-Bounty-OOBE-x-Ace-Data-Cloud" target="_blank" rel="noopener">GitHub</a>
     </div>
-    <div class="footer-prog">SAP · SAPpUhsWLJG1FfkGRcXagEDMrMsWGjbky7AyhGpFETZ</div>
+    <div class="footer-prog">SAP &middot; SAPpUhsWLJG1FfkGRcXagEDMrMsWGjbky7AyhGpFETZ</div>
   </div>
 </footer>
 
 <script>
-  /* ── SCROLL REVEAL ── */
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        io.unobserve(e.target);
-      }
+      if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); }
     });
   }, { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
-  /* ── CALLOUT BARS ── */
   const heights = [22,38,28,55,40,68,34,50,42,72,46,80,44,60,36,52,48,76,30,64];
-  const palette = ['#f97316','#fb923c','#f97316','#fdba74','#ea580c','#fb923c','#f97316','#fdba74','#f97316','#ea580c'];
-  const barWrap = document.getElementById('calloutBars');
-  heights.forEach((h,i) => {
-    const b = document.createElement('div');
-    b.style.cssText = `flex:1;height:${h}px;border-radius:3px 3px 0 0;background:${palette[i%palette.length]};transform-origin:bottom;animation:barGrow 0.6s ${i*0.04}s ease both;`;
+  const palette = ["#f97316","#fb923c","#f97316","#fdba74","#ea580c","#fb923c","#f97316","#fdba74","#f97316","#ea580c"];
+  const barWrap = document.getElementById("calloutBars");
+  if (barWrap) heights.forEach((h,i) => {
+    const b = document.createElement("div");
+    b.style.cssText = "flex:1;height:"+h+"px;border-radius:3px 3px 0 0;background:"+palette[i%palette.length]+";transform-origin:bottom;animation:barGrow 0.6s "+(i*0.04)+"s ease both;";
     barWrap.appendChild(b);
   });
 
-  /* ── FLOW NODE STAGGER ── */
-  document.querySelectorAll('.flow-node').forEach((el, i) => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(12px)';
-    el.style.transition = `opacity 0.45s ${i*0.07}s ease, transform 0.45s ${i*0.07}s ease`;
-    setTimeout(() => {
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
-    }, 500 + i * 70);
-  });
-
-  /* ── METRIC CARD HOVER GLOW ── */
-  document.querySelectorAll('.metric').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-      card.style.boxShadow = '0 0 24px rgba(249,115,22,0.06)';
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.boxShadow = '';
-    });
-  });
-
-  /* ── STEP HOVER ── */
-  document.querySelectorAll('.step').forEach(s => {
-    s.addEventListener('mouseenter', () => {
-      s.querySelector('.step-n').style.borderColor = 'var(--orange)';
-      s.querySelector('.step-n').style.background = 'rgba(249,115,22,0.08)';
-    });
-    s.addEventListener('mouseleave', () => {
-      s.querySelector('.step-n').style.borderColor = '';
-      s.querySelector('.step-n').style.background = '';
-    });
+  document.querySelectorAll(".metric").forEach(card => {
+    card.addEventListener("mouseenter", () => { card.style.boxShadow = "0 0 24px rgba(249,115,22,0.06)"; });
+    card.addEventListener("mouseleave", () => { card.style.boxShadow = ""; });
   });
 </script>
 
@@ -1993,132 +2150,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-/* AGENT FLOW VISUALIZATION */
 (function () {
-  if (typeof gsap === 'undefined') return;
+  if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") return;
   gsap.registerPlugin(ScrollTrigger);
-
-  const VW = 860, VH = 500;
-  let built = false;
-
-  function makePath(x1, y1, x2, y2) {
-    const my = (y1 + y2) / 2;
-    return 'M ' + x1 + ' ' + y1 + ' C ' + x1 + ' ' + my + ' ' + x2 + ' ' + my + ' ' + x2 + ' ' + y2;
-  }
-
-  function nodeRect(id) {
-    const inner = document.getElementById('aflowInner');
-    const el    = document.getElementById(id);
-    if (!inner || !el) return null;
-    const ir = inner.getBoundingClientRect();
-    const er = el.getBoundingClientRect();
-    const sx = VW / ir.width, sy = VH / ir.height;
-    const l = (er.left - ir.left) * sx;
-    const t = (er.top  - ir.top ) * sy;
-    const w = er.width  * sx;
-    const h = er.height * sy;
-    return { top:t, bottom:t+h, mid:l+w/2, cx:l+w/2, cy:t+h/2 };
-  }
-
-  function buildPaths() {
-    if (built) return;
-    const d  = nodeRect('n-discover');
-    const a  = nodeRect('n-ace');
-    const s  = nodeRect('n-sentinel');
-    const st = nodeRect('n-settle');
-    if (!d || !a || !s || !st) return;
-
-    const p1 = makePath(d.mid,  d.bottom,  a.mid,  a.top);
-    const p2 = makePath(a.mid,  a.bottom,  s.mid,  s.top);
-    const p3 = makePath(s.mid,  s.bottom, st.mid, st.top);
-
-    ['seg1','beam1'].forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('d', p1); });
-    ['seg2','beam2'].forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('d', p2); });
-    ['seg3','beam3'].forEach(id => { const el = document.getElementById(id); if (el) el.setAttribute('d', p3); });
-
-    ['beam1','beam2','beam3'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      try { const len = el.getTotalLength(); gsap.set(el, { strokeDasharray: len, strokeDashoffset: len }); } catch(e) {}
-    });
-
-    const g1 = document.getElementById('glow1');
-    const g4 = document.getElementById('glow4');
-    if (g1) { g1.setAttribute('cx', d.cx);  g1.setAttribute('cy', d.cy);  gsap.to(g1, { opacity:1, duration:1 }); }
-    if (g4) { g4.setAttribute('cx', st.cx); g4.setAttribute('cy', st.cy); gsap.to(g4, { opacity:1, duration:1, delay:1.6 }); }
-
-    built = true;
-  }
-
-  function travelDot(dotId, segId, startDelay) {
-    const seg = document.getElementById(segId);
-    const dot = document.getElementById(dotId);
-    if (!seg || !dot) return;
-    let len; try { len = seg.getTotalLength(); } catch(e) { return; }
-    if (!len) return;
-    function run() {
-      const dur = 2000 + Math.random() * 900;
-      let t0 = null;
-      function frame(ts) {
-        if (!t0) t0 = ts;
-        const p = Math.min((ts - t0) / dur, 1);
-        try {
-          const pt = seg.getPointAtLength(p * len);
-          dot.setAttribute('cx', pt.x);
-          dot.setAttribute('cy', pt.y);
-          const alpha = p < 0.08 ? p / 0.08 : p > 0.92 ? (1 - p) / 0.08 : 1;
-          dot.setAttribute('opacity', alpha * 0.95);
-        } catch(e) {}
-        if (p < 1) requestAnimationFrame(frame);
-        else setTimeout(run, 300 + Math.random() * 800);
-      }
-      requestAnimationFrame(frame);
-    }
-    setTimeout(run, startDelay);
-  }
-
-  function animate() {
-    buildPaths();
-    const tl = gsap.timeline();
-    tl.fromTo('#n-discover', { opacity:0, scale:0.82, y:16 }, { opacity:1, scale:1, y:0, duration:0.65, ease:'back.out(1.8)' }, 0)
-      .fromTo('#n-ace',      { opacity:0, scale:0.82, y:16 }, { opacity:1, scale:1, y:0, duration:0.65, ease:'back.out(1.8)' }, 0.38)
-      .fromTo('#n-sentinel', { opacity:0, scale:0.82, y:16 }, { opacity:1, scale:1, y:0, duration:0.65, ease:'back.out(1.8)' }, 0.72)
-      .fromTo('#n-settle',   { opacity:0, scale:0.82, y:16 }, { opacity:1, scale:1, y:0, duration:0.65, ease:'back.out(1.8)' }, 1.06);
-
-    ['beam1','beam2','beam3'].forEach((id, i) => {
-      const el = document.getElementById(id);
-      if (el) gsap.to(el, { strokeDashoffset:0, duration:1.1, ease:'power2.inOut', delay:0.18 + i * 0.42 });
-    });
-
-    gsap.fromTo('.afl-badge',
-      { opacity:0, scale:0.7, y:8 },
-      { opacity:1, scale:1,   y:0, duration:0.45, stagger:0.08, delay:1.8, ease:'back.out(1.6)' }
-    );
-
-    gsap.to('.afl-badge', {
-      y: '-=6', duration:2.4, ease:'sine.inOut',
-      yoyo:true, repeat:-1,
-      stagger:{ amount:3, from:'random' }, delay:2.6
-    });
-
-    setTimeout(function() {
-      travelDot('dot1', 'seg1', 0);
-      travelDot('dot2', 'seg2', 750);
-      travelDot('dot3', 'seg3', 1500);
-    }, 2500);
-  }
-
   ScrollTrigger.create({
-    trigger: '#how',
-    start: 'top 72%',
+    trigger: "#pw",
+    start: "top 78%",
     once: true,
-    onEnter: animate
-  });
-
-  var rsTimer;
-  window.addEventListener('resize', function() {
-    clearTimeout(rsTimer);
-    rsTimer = setTimeout(function() { built = false; buildPaths(); }, 160);
+    onEnter: function () {
+      gsap.fromTo(
+        ["#pwc1","#pwc2","#pwc3","#pwc4","#pwc5","#pwc6","#pwc7"],
+        { opacity: 0, y: 24, scale: 0.93 },
+        { opacity: 1, y: 0,  scale: 1, duration: 0.6, stagger: 0.1, ease: "back.out(1.6)" }
+      );
+    }
   });
 })();
 </script>
