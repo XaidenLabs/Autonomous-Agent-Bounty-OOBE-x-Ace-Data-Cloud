@@ -9,6 +9,7 @@ import ServicesPage from "./pages/ServicesPage";
 import SentinelPage from "./pages/SentinelPage";
 import { C, PHASES, trunc } from "./components/ui/Shared";
 import OnboardingTour, { useOnboardingTour } from "./components/ui/OnboardingTour";
+import SkeletonLoader from "./components/ui/SkeletonLoader";
 
 // In production (Vercel), use relative paths so vercel.json rewrites can proxy to the VPS.
 // In dev, connect directly to the VPS IP or localhost.
@@ -33,6 +34,7 @@ export default function AgentDashboard() {
   const [triggering, setTriggering] = useState(false);
   const [riskFilter, setRiskFilter] = useState(null);
   const { tourOpen, startTour, closeTour } = useOnboardingTour();
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     const handleResize = () => {
@@ -101,8 +103,10 @@ export default function AgentDashboard() {
         setProg(0);
         // We could compute time remaining based on lastRunTimestamp and 10min interval here if desired
       }
+      setInitialLoading(false);
     } catch (e) {
       console.warn("Failed to fetch daemon data", e);
+      setInitialLoading(false);
     }
   }, []);
 
@@ -251,7 +255,11 @@ export default function AgentDashboard() {
             </div>
           )}
 
-          {page === "dashboard" && <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} cd={cd} riskFilter={riskFilter} setRiskFilter={setRiskFilter} />}
+          {page === "dashboard" && (
+            initialLoading
+              ? <SkeletonLoader isMobile={isMobile} isTablet={isTablet} />
+              : <OverviewPage runs={runs} filtered={filtered} search={search} setPage={setPage} status={status} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} cd={cd} riskFilter={riskFilter} setRiskFilter={setRiskFilter} />
+          )}
           {page === "runs" && <RunsPage runs={runs} filtered={filtered} search={search} isMobile={isMobile} isTablet={isTablet} isNarrow={isNarrow} />}
           {page === "payments" && <PaymentsPage runs={filtered} status={status} isMobile={isMobile} />}
           {page === "agent" && <AgentPage runs={filtered} status={status} isMobile={isMobile} />}
