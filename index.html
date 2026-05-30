@@ -484,81 +484,124 @@
   /* ════════════════════════════
      FLOW DIAGRAM
   ════════════════════════════ */
-  .flow {
+  @keyframes flow-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.3); }
+    50%       { box-shadow: 0 0 0 8px rgba(249,115,22,0); }
+  }
+
+  .flow-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: 1fr 32px 1fr 32px 1fr 32px 1fr;
     gap: 0;
-    position: relative;
-    overflow-x: auto;
-    padding-bottom: 4px;
+    align-items: center;
+    margin-bottom: 0;
   }
-  .flow::after {
-    content: '';
-    position: absolute;
-    top: 28px;
-    left: calc(100% / 14);
-    right: calc(100% / 14);
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border2) 10%, var(--border2) 90%, transparent);
-    pointer-events: none;
+  .flow-arrow-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 60px;
+    color: var(--border2);
+    font-size: 18px;
+    flex-shrink: 0;
   }
-  .flow-node {
+  .flow-row2 {
+    display: grid;
+    grid-template-columns: 1fr 32px 1fr 32px 1fr;
+    gap: 0;
+    align-items: center;
+    margin-top: 12px;
+  }
+  /* Full-width stacked for narrow screens */
+  .flow-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 22px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 0 6px;
+    gap: 0;
     position: relative;
-  }
-  .flow-bubble {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    border: 1px solid var(--border2);
-    background: var(--surface2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    position: relative;
-    z-index: 1;
-    flex-shrink: 0;
-    transition: border-color 0.2s, background 0.2s;
+    overflow: hidden;
+    transition: border-color 0.22s, transform 0.22s, box-shadow 0.22s;
     cursor: default;
+    height: 100%;
   }
-  .flow-node:hover .flow-bubble {
-    border-color: var(--orange);
-    background: rgba(249,115,22,0.06);
+  .flow-step:hover {
+    border-color: rgba(249,115,22,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
   }
-  .flow-num {
+  .flow-step::before {
+    content: '';
     position: absolute;
-    top: -4px; right: -4px;
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: var(--orange);
-    color: #fff;
-    font-family: var(--mono);
-    font-size: 8px;
-    font-weight: 600;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--orange), transparent 80%);
+    opacity: 0;
+    transition: opacity 0.22s;
+  }
+  .flow-step:hover::before { opacity: 1; }
+  .flow-step-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .flow-icon-wrap {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    background: rgba(249,115,22,0.08);
+    border: 1px solid rgba(249,115,22,0.18);
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    position: relative;
+    transition: background 0.22s, border-color 0.22s;
+  }
+  .flow-step:hover .flow-icon-wrap {
+    background: rgba(249,115,22,0.14);
+    border-color: rgba(249,115,22,0.35);
+  }
+  .flow-step-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--orange);
+    letter-spacing: 0.12em;
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .flow-step-name {
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
     line-height: 1;
   }
-  .flow-label {
+  .flow-step-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .flow-step-tag {
+    display: inline-block;
+    margin-top: 14px;
     font-family: var(--mono);
     font-size: 9px;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-align: center;
+    color: rgba(249,115,22,0.6);
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(249,115,22,0.06);
+    border: 1px solid rgba(249,115,22,0.12);
+    transition: color 0.2s;
   }
-  .flow-detail {
-    font-size: 9px;
-    color: var(--dim);
-    text-align: center;
-    line-height: 1.5;
-    max-width: 90px;
-  }
+  .flow-step:hover .flow-step-tag { color: var(--orange); }
 
   /* ════════════════════════════
      CODE BLOCKS
@@ -975,8 +1018,8 @@
     .nav-links { display: none; }
     .metrics-grid { grid-template-columns: 1fr 1fr; }
     .arch-grid, .deploy-grid, .ack-grid { grid-template-columns: 1fr; }
-    .flow { grid-template-columns: repeat(4, 1fr); }
-    .flow::after { display: none; }
+    .flow-grid, .flow-row2 { grid-template-columns: 1fr; }
+    .flow-arrow-col { display: none; }
     .hero-status { flex-direction: column; align-items: flex-start; gap: 12px; }
     .hs-pipe { display: none; }
     h1 { font-size: 34px; }
@@ -984,7 +1027,6 @@
   @media (max-width: 480px) {
     .wrap { padding: 0 18px; }
     .metrics-grid { grid-template-columns: 1fr; }
-    .flow { grid-template-columns: repeat(2, 1fr); }
     .hero { padding: 60px 0 48px; }
   }
 </style>
@@ -1153,65 +1195,107 @@
     <h2>How the Agent Works</h2>
     <p class="sec-body">
       A single <code>npm start</code> command launches the daemon. From that point
-      every phase executes autonomously — no human input, no manual triggers.
+      every phase executes autonomously — no human input, no manual triggers,
+      no intervention required.
     </p>
 
-    <div class="flow">
-      <div class="flow-node">
-        <div class="flow-bubble">
-          <span>◎</span>
-          <div class="flow-num">1</div>
+    <!-- Row 1: steps 1–4 -->
+    <div class="flow-grid">
+      <div class="flow-step">
+        <div class="flow-step-top">
+          <div class="flow-icon-wrap">◎</div>
+          <div>
+            <span class="flow-step-num">STEP 01</span>
+            <div class="flow-step-name">Discover</div>
+          </div>
         </div>
-        <div class="flow-label">Discover</div>
-        <div class="flow-detail">Scans SAP network & Sentinel profile</div>
+        <div class="flow-step-desc">Queries the SAP on-chain agent registry. Fetches Synapse Sentinel's live profile. Scans A2A and x402-compatible agents across the network.</div>
+        <span class="flow-step-tag">src/oobe/discovery.ts</span>
       </div>
-      <div class="flow-node">
-        <div class="flow-bubble">
-          <span>🧠</span>
-          <div class="flow-num">2</div>
+
+      <div class="flow-arrow-col">→</div>
+
+      <div class="flow-step">
+        <div class="flow-step-top">
+          <div class="flow-icon-wrap">🧠</div>
+          <div>
+            <span class="flow-step-num">STEP 02</span>
+            <div class="flow-step-name">Analyze</div>
+          </div>
         </div>
-        <div class="flow-label">Analyze</div>
-        <div class="flow-detail">Ace Data LLM · risk score 0–100</div>
+        <div class="flow-step-desc">Calls Ace Data Cloud LLM (<code>gpt-4o-mini</code>) to produce a structured risk score 0–100 and market insights about the Solana ecosystem.</div>
+        <span class="flow-step-tag">src/ace/llm.ts · Service 1</span>
       </div>
-      <div class="flow-node">
-        <div class="flow-bubble">
-          <span>🎨</span>
-          <div class="flow-num">3</div>
+
+      <div class="flow-arrow-col">→</div>
+
+      <div class="flow-step">
+        <div class="flow-step-top">
+          <div class="flow-icon-wrap">🎨</div>
+          <div>
+            <span class="flow-step-num">STEP 03</span>
+            <div class="flow-step-name">Visualize</div>
+          </div>
         </div>
-        <div class="flow-label">Visualize</div>
-        <div class="flow-detail">Ace Data image generation report</div>
+        <div class="flow-step-desc">Generates a visual intelligence report card via Ace Data image generation. Each loop produces a unique visual artifact tied to that run's risk score.</div>
+        <span class="flow-step-tag">src/ace/image.ts · Service 2</span>
       </div>
-      <div class="flow-node">
-        <div class="flow-bubble">
-          <span>🎵</span>
-          <div class="flow-num">4</div>
+
+      <div class="flow-arrow-col">→</div>
+
+      <div class="flow-step">
+        <div class="flow-step-top">
+          <div class="flow-icon-wrap">🎵</div>
+          <div>
+            <span class="flow-step-num">STEP 04</span>
+            <div class="flow-step-name">Sonify</div>
+          </div>
         </div>
-        <div class="flow-label">Sonify</div>
-        <div class="flow-detail">Ace Data audio sentiment clip</div>
+        <div class="flow-step-desc">Produces a 10-second sentiment audio clip via Ace Data audio generation. Mood maps directly to the risk score — third and final distinct AI service.</div>
+        <span class="flow-step-tag">src/ace/music.ts · Service 3</span>
       </div>
-      <div class="flow-node">
-        <div class="flow-bubble">
-          <span>⬟</span>
-          <div class="flow-num">5</div>
+    </div>
+
+    <!-- Row 2: steps 5–7 -->
+    <div class="flow-row2" style="margin-top:12px">
+      <div class="flow-step">
+        <div class="flow-step-top">
+          <div class="flow-icon-wrap">⬟</div>
+          <div>
+            <span class="flow-step-num">STEP 05</span>
+            <div class="flow-step-name">Sentinel</div>
+          </div>
         </div>
-        <div class="flow-label">Sentinel</div>
-        <div class="flow-detail">Pays Synapse Sentinel via x402</div>
+        <div class="flow-step-desc">Pays Synapse Sentinel via x402 using the dedicated escrow channel (nonce 1). Mandatory SAP validation service — called every single loop without exception.</div>
+        <span class="flow-step-tag">src/sentinel/interact.ts</span>
       </div>
-      <div class="flow-node">
-        <div class="flow-bubble">
-          <span>📝</span>
-          <div class="flow-num">6</div>
+
+      <div class="flow-arrow-col">→</div>
+
+      <div class="flow-step">
+        <div class="flow-step-top">
+          <div class="flow-icon-wrap">📝</div>
+          <div>
+            <span class="flow-step-num">STEP 06</span>
+            <div class="flow-step-name">Inscribe</div>
+          </div>
         </div>
-        <div class="flow-label">Inscribe</div>
-        <div class="flow-detail">Writes to SessionLedger PDA on-chain</div>
+        <div class="flow-step-desc">Writes this loop's intelligence permanently to the on-chain <code>SessionLedger</code> PDA. Seals every 10 runs into an immutable <code>LedgerPage</code> archive.</div>
+        <span class="flow-step-tag">src/oobe/session.ts</span>
       </div>
-      <div class="flow-node">
-        <div class="flow-bubble">
-          <span>⬡</span>
-          <div class="flow-num">7</div>
+
+      <div class="flow-arrow-col">→</div>
+
+      <div class="flow-step" style="border-color:rgba(249,115,22,0.25);background:rgba(249,115,22,0.03)">
+        <div class="flow-step-top">
+          <div class="flow-icon-wrap" style="background:rgba(249,115,22,0.14);border-color:rgba(249,115,22,0.35)">⬡</div>
+          <div>
+            <span class="flow-step-num">STEP 07</span>
+            <div class="flow-step-name">Settle</div>
+          </div>
         </div>
-        <div class="flow-label">Settle</div>
-        <div class="flow-detail">settleCallsV2 · 5,000 lam debited</div>
+        <div class="flow-step-desc">Executes <code>settleCallsV2</code> CPI — debits the x402 EscrowV2 PDA by <strong style="color:var(--orange)">5,000 lamports</strong>. Real on-chain payment volume, verifiable on Solscan.</div>
+        <span class="flow-step-tag" style="color:var(--orange);border-color:rgba(249,115,22,0.3)">src/oobe/payments.ts · Volume</span>
       </div>
     </div>
   </section>
