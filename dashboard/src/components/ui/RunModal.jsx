@@ -68,16 +68,26 @@ export default function RunModal({ run, onClose }) {
               On-Chain Identifiers
             </div>
             {[
-              { l: "Settlement TX", v: run.settlementTx || "—", c: C.orange },
-              { l: "Sentinel TX", v: run.sentinelTx || "—", c: C.orange2 },
-              { l: "Session PDA", v: run.sessionPda || "—", c: C.dim },
-            ].map(({ l, v, c }) => (
+              { l: "Settlement TX", v: run.settlementTx || "—", type: "tx", c: C.orange },
+              { l: "Sentinel TX", v: run.sentinelTx || "—", type: "tx", c: C.orange2 },
+              { l: "Session PDA", v: run.sessionPda || "—", type: "account", c: C.dim },
+            ].map(({ l, v, type, c }) => (
               <div key={l} style={{
                 padding: "10px 0", borderBottom: `1px solid ${C.border2}`,
               }}>
                 <div style={{ fontSize: 9, color: C.dim, marginBottom: 4 }}>{l}</div>
-                <div style={{ fontSize: 10, color: c, fontFamily: "monospace", wordBreak: "break-all" }}>
-                  {v}
+                <div style={{ fontSize: 10, color: c, fontFamily: "monospace", wordBreak: "break-all", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+                  <span>{v}</span>
+                  {v !== "—" && !v.includes("simulated") && (
+                    <a 
+                      href={`https://solscan.io/${type}/${v}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ color: C.orange, textDecoration: "none", fontSize: 9, display: "flex", alignItems: "center", gap: 3, flexShrink: 0, padding: "2px 6px", background: "rgba(249,115,22,0.1)", borderRadius: 4, border: "1px solid rgba(249,115,22,0.2)" }}
+                    >
+                      Solscan ↗
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
