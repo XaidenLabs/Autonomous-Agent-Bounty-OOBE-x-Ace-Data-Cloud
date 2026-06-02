@@ -203,9 +203,9 @@ export async function writeLoopToSession(
   let attempts = 0;
   let sig: string = "";
 
-  while (!success && attempts < 10) {
+  while (!success && attempts < 50) {
     const sequenceToWrite = loopWriteCount - 1;
-    const epochIndex = 0; // Math.floor(sequenceToWrite / 256);
+    const epochIndex = Math.floor(sequenceToWrite / 1000);
     const epochBuf = Buffer.alloc(4);
     epochBuf.writeUInt32LE(epochIndex, 0);
     const epochPagePda = PublicKey.findProgramAddressSync([
@@ -238,6 +238,7 @@ export async function writeLoopToSession(
       sig = await client.connection.sendTransaction(tx, { preflightCommitment: "confirmed" });
       success = true;
     } catch (err: any) {
+      console.warn("[SESSION] Write error:", err);
       const msg = err.message || "";
       if (msg.includes("InvalidSequence") || msg.includes("bad seq") || msg.includes("0x179c") || msg.includes("EpochMismatch") || msg.includes("0x17a1")) {
         console.warn(`[SESSION] Sequence/Epoch mismatch at ${sequenceToWrite}. Incrementing and probing...`);
