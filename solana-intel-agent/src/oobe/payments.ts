@@ -116,12 +116,14 @@ export async function checkAndTopUp(
   if (!existingInfo) return;
 
   const balance = existingInfo.lamports;
+  const rentExempt = 2000000;
+  const usable = Math.max(0, balance - rentExempt);
   const ppc = 5000;
-  const affordable = Math.floor(balance / ppc);
-  console.log(`[PAYMENTS] Balance: ${balance} lamports (~${affordable} calls)`);
+  const affordable = Math.floor(usable / ppc);
+  console.log(`[PAYMENTS] Balance: ${balance} lamports (~${affordable} usable calls)`);
 
-  if (affordable < 20) {
-    console.log("[PAYMENTS] Low — depositing 1,000,000 lamports...");
+  if (affordable < 50) {
+    console.log("[PAYMENTS] Low usable balance — depositing 1,000,000 lamports...");
     const ix = await client.program.methods.depositEscrow(
       new BN(1000000)
     ).accounts({

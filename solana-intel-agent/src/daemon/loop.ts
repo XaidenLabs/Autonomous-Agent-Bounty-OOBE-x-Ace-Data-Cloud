@@ -235,6 +235,7 @@ async function runLoop(
 
     // ── 5. PAY SENTINEL (mandatory every loop) ────────────────────────────
     currentPhase = "sentinel-payment";
+    await withRetry(() => checkAndTopUp(client, keypair), "escrow-topup");
     sentinelResult = await withRetry(
       () => paySentinel(client, keypair, loopId),
       "sentinel-payment"
