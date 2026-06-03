@@ -1,18 +1,10 @@
-import { Keypair, Connection } from "@solana/web3.js";
-import { SapClient, Pdas } from "@oobe-protocol-labs/synapse-sap-sdk";
-import dotenv from "dotenv";
-import { Wallet } from "@coral-xyz/anchor";
-dotenv.config({path: "./.env"});
+import { Connection, PublicKey } from "@solana/web3.js";
 
 async function main() {
-  const bytes = JSON.parse(process.env.SOLANA_PRIVATE_KEY!);
-  const kp = Keypair.fromSecretKey(Uint8Array.from(bytes));
-  const c = new Connection("https://api.mainnet-beta.solana.com");
-  const client = new SapClient(c, new Wallet(kp) as any);
-  const pda = Pdas.getSessionPDA(kp.publicKey)[0];
-  const acct = await client.program.account.sessionLedger.fetch(pda);
-  console.log(JSON.stringify(acct, (key, value) => 
-    typeof value === 'bigint' ? value.toString() : value
-  , 2));
+  const connection = new Connection("https://api.mainnet-beta.solana.com");
+  const escrowPda = new PublicKey("5cLTr7UhmRyRFgPVuqR96AtkokFCw2BecCCRqVwE2CUPE4zd195dCFcpmEtF6ukYRSQP7Bsuok2VHdHrc2EF8DRC");
+  const info = await connection.getAccountInfo(escrowPda);
+  console.log("Lamports:", info?.lamports);
 }
+
 main().catch(console.error);

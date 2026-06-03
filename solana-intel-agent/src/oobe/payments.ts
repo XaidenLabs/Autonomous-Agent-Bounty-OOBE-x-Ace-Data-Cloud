@@ -112,29 +112,29 @@ export async function checkAndTopUp(
   const agentPda = getAgentPda(keypair.publicKey);
   const escrowPda = getEscrowPda(agentPda, keypair.publicKey);
 
-  const existingInfo = await client.connection.getAccountInfo(escrowPda);
-  if (!existingInfo) return;
+  try {
+    const escrowData = await client.program.account.escrowAccount.fetch(escrowPda);
+    const balance = Number(escrowData.balance.toString());
+    const ppc = Number(escrowData.pricePerCall.toString());
+    const affordable = Math.floor(balance / ppc);
+    console.log(`[PAYMENTS] Escrow internal balance: ${balance} lamports (~${affordable} usable calls)`);
 
-  const balance = existingInfo.lamports;
-  const rentExempt = 2000000;
-  const usable = Math.max(0, balance - rentExempt);
-  const ppc = 5000;
-  const affordable = Math.floor(usable / ppc);
-  console.log(`[PAYMENTS] Balance: ${balance} lamports (~${affordable} usable calls)`);
+    if (affordable < 50) {
+      console.log("[PAYMENTS] Low internal balance — depositing 1,000,000 lamports...");
+      const ix = await client.program.methods.depositEscrow(
+        new BN(1000000)
+      ).accounts({
+        depositor: keypair.publicKey,
+        escrow: escrowPda,
+        systemProgram: SystemProgram.programId,
+      }).instruction();
 
-  if (affordable < 50) {
-    console.log("[PAYMENTS] Low usable balance — depositing 1,000,000 lamports...");
-    const ix = await client.program.methods.depositEscrow(
-      new BN(1000000)
-    ).accounts({
-      depositor: keypair.publicKey,
-      escrow: escrowPda,
-      systemProgram: SystemProgram.programId,
-    }).instruction();
-
-    const tx = await client.buildTransaction([ix], keypair.publicKey);
-    tx.sign([keypair]);
-    const sig = await client.connection.sendTransaction(tx, { preflightCommitment: "confirmed" });
-    console.log(`[PAYMENTS] ✅ Topped up. TX: ${sig}`);
+      const tx = await client.buildTransaction([ix], keypair.publicKey);
+      tx.sign([keypair]);
+      const sig = await client.connection.sendTransaction(tx, { preflightCommitment: "confirmed" });
+      console.log(`[PAYMENTS] ✅ Topped up. TX: ${sig}`);
+    }
+  } catch (err) {
+    console.warn("[PAYMENTS] Failed to fetch or top-up escrow:", err);
   }
 }
