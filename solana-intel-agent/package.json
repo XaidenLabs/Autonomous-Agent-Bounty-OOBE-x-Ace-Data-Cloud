@@ -1,14 +1,14 @@
 {
   "name": "solana-intel-agent",
   "version": "1.0.0",
-  "description": "Autonomous on-chain intelligence agent for OOBE × Ace Data Cloud Bounty 2026",
+  "description": "Autonomous on-chain intelligence agent for OOBE \u00d7 Ace Data Cloud Bounty 2026",
   "main": "dist/daemon/loop.js",
   "scripts": {
     "register": "ts-node src/setup/register.ts",
     "publish-tools": "ts-node src/setup/publishTools.ts",
-    "start": "ts-node src/daemon/loop.ts",
-    "build": "tsc",
-    "start:prod": "node dist/daemon/loop.js",
+    "start": "node init && ts-node src/daemon/loop.ts",
+    "build": "node init && tsc",
+    "start:prod": "node init && node dist/daemon/loop.js",
     "check": "npx synapse-sap doctor run"
   },
   "keywords": [
